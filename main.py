@@ -1,7 +1,7 @@
 import os
 
 code_line = []
-variables = set()
+variables = {}
 needed_functions = set()
 temp_buffer_count = 0
 
@@ -101,13 +101,11 @@ def compile_line(line):
 
     elif cmd == 'toint':
         needed_functions.add('toint')
-        source_var = parts[1]
-        buffer_name = f"_temp_int_{temp_buffer_count}"
-        temp_buffer_count += 1
+        target_var = parts[1]
 
-        variables.add(f"{buffer_name} rb 20")
+        variables[target_var] = 'dq 0'
 
-        return f"   mov rdi, {buffer_name}\n    mov rax, [{source_var}]\n   call toint"
+        return f"    mov rsi, {target_var}\n    call toint\n    mov [{target_var}], rax"
 
     return ""
 for line in code_line:
