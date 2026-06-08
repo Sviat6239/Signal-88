@@ -1,3 +1,5 @@
+import os
+
 code_line = []
 variables = set()
 
@@ -18,10 +20,12 @@ output = "format elf64 executable 3\nentry _start\n\n"
 output += "segment readable executable\n_start:\n"            
 
 print("#Our code lines:")
-print(code_line)    
+print(code_line)  
+print(" ")  
 
 print("#Our variables:")
 print(variables)
+print(" ")
 
 def compile_line(line):
     parts = line.split()
@@ -51,5 +55,9 @@ for var in variables:
     output += f"    {var} dq 0\n"
 
 print("#Our compiled code:")
-print(output)                    
+print(output)  
+print(" ")                  
         
+f = open('output.asm', 'w')   
+f.write(output)   
+print("Code compiled")
