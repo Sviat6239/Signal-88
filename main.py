@@ -39,6 +39,15 @@ def compile_line(line):
 
     elif cmd == 'add':
         return f"    mov rax, [{parts[2]}]\n    add rax, [{parts[3]}]\n    mov [{parts[1]}], rax\n"
+    
+    elif cmd == 'sub':
+        return f"    mov rax, [{parts[2]}]\n    sub rax, [{parts[3]}]\n    mov [{parts[1]}], rax\n"
+    
+    elif cmd == 'mul':
+        return f"    mov rax, [{parts[2]}]\n    mov rbx, [{parts[3]}]\n    mul rbx\n    mov [{parts[1]}], rax\n"
+
+    elif cmd == 'div':
+        return f"    mov rax, [{parts[2]}]\n    mov rbx, [{parts[3]}]\n    div rbx\n    mov [{parts[1]}], rax\n"
 
     return ""
 for line in code_line:
