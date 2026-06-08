@@ -2,7 +2,43 @@ import os
 
 code_line = []
 variables = set()
+needed_functions = set()
+temp_buffer_count = 0
 
+FUNCTIONS = {
+    'tostr':"""
+    tostr:
+        mov rcx, 10
+        mov rdx, rdi
+        add rdi, 19
+        mov byte [rdi], 0
+    .loop:
+        dec rdi
+        xor rdx, rdx
+        div rcx
+        add dl, '0'
+        mov [rdi], dl
+        test rax, rax
+        jnz .loop
+        ret
+    """,
+        'toint':"""
+    toint:
+        xor rax, rax
+        mov rcx, 10
+    .loop:
+        movzx rdx, byte [rsi]
+        cmp rdx, 0
+        je .done
+        sub rdx, '0'
+        imul rax, rcx
+        add rax, rdx
+        inc rsi
+        jmp .loop
+    .done:
+        ret
+    """
+}
 
 file = 'code.bas'
 
@@ -28,6 +64,7 @@ print(variables)
 print(" ")
 
 def compile_line(line):
+    global temp_buffer_count
     parts = line.split()
     cmd = parts[0]
 
@@ -48,6 +85,21 @@ def compile_line(line):
 
     elif cmd == 'div':
         return f"    mov rax, [{parts[2]}]\n    mov rbx, [{parts[3]}]\n    div rbx\n    mov [{parts[1]}], rax\n"
+    
+    elif cmd  == 'print':
+       return "     print func" 
+
+    elif cmd == 'tosrt':
+        source_var = parts[1]
+        buffer_name = f"_temp_str_{temp_buffer_count}"
+        temp_buffer_count += 1
+
+        variables.add(f"buffer_name" rb 20)
+
+        return f"   mov rdi, {buffer_name}\n    mov rax, [{source_var}]\n   call tostr"
+
+    elif cmd == 'toint':
+        return "    toint func"
 
     return ""
 for line in code_line:

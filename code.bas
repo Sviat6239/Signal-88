@@ -16,3 +16,8 @@ add numC numC numD
 
 mul numC numC numA
 div numC numG numD
+
+print "text"
+tostr numA
+print numA
+toint numA
