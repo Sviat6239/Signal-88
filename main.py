@@ -23,11 +23,27 @@ print(code_line)
 print("#Our variables:")
 print(variables)
 
-def compile_line():
+def compile_line(line):
     parts = line.split()
     cmd = parts[0]
 
     if cmd == 'let':
-        var_name = parts[1]
-        val = parts[3]
+        if len(parts) >= 4:
+            return f"    mov rax, {parts[3]}\n    mov [{parts[1]}], rax\n"
+        else:
+            return ""
+
+    elif cmd == 'add':
+        return f"    mov rax, [{parts[2]}]\n    add rax, [{parts[3]}]\n    mov [{parts[1]}], rax\n"
+
+    return ""
+for line in code_line:
+    output += compile_line(line) + "\n"
+
+output += "\nsegment readable writable\n"
+for var in variables:
+    output += f"    {var} dq 0\n"
+
+print("#Our compiled code:")
+print(output)                    
         
