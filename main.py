@@ -100,7 +100,14 @@ def compile_line(line):
         return f"   mov rdi, {buffer_name}\n    mov rax, [{source_var}]\n   call tostr"
 
     elif cmd == 'toint':
-        return "    toint func"
+        needed_functions.add('toint')
+        source_var = parts[1]
+        buffer_name = f"_temp_int_{temp_buffer_count}"
+        temp_buffer_count += 1
+
+        variables.add(f"{buffer_name} rb 20")
+
+        return f"   mov rdi, {buffer_name}\n    mov rax, [{source_var}]\n   call toint"
 
     return ""
 for line in code_line:
