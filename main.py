@@ -87,9 +87,10 @@ def compile_line(line):
         return f"    mov rax, [{parts[2]}]\n    mov rbx, [{parts[3]}]\n    div rbx\n    mov [{parts[1]}], rax\n"
     
     elif cmd  == 'print':
-       return "     print func" 
+        return "     ;print func" 
 
     elif cmd == 'tostr':
+        needed_functions.add('tostr')
         source_var = parts[1]
         buffer_name = f"_temp_str_{temp_buffer_count}"
         temp_buffer_count += 1
