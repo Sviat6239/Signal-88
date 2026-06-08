@@ -21,3 +21,14 @@ print "text"
 tostr numA
 print numA
 toint numA
+
+
+if numA == 10 then
+    print "ten"
+elseif numA == 5 then
+    print "five"
+elseif numA == 15 then
+    print "fiveteen"
+else 
+    print "another value"
+end if                
