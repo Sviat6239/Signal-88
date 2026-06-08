@@ -89,12 +89,12 @@ def compile_line(line):
     elif cmd  == 'print':
        return "     print func" 
 
-    elif cmd == 'tosrt':
+    elif cmd == 'tostr':
         source_var = parts[1]
         buffer_name = f"_temp_str_{temp_buffer_count}"
         temp_buffer_count += 1
 
-        variables.add(f"buffer_name" rb 20)
+        variables.add(f"{buffer_name} rb 20")
 
         return f"   mov rdi, {buffer_name}\n    mov rax, [{source_var}]\n   call tostr"
 
@@ -111,9 +111,16 @@ output += """
     syscall
 """    
 
+for func_name in needed_functions:
+    output += FUNCTIONS[func_name] + "\n"
+
 output += "\nsegment readable writable\n"
 for var in variables:
-    output += f"    {var} dq 0\n"
+    if ' ' in var:
+        output += f"    {var}\n"
+    else:
+        output += f"    {var} dq 0\n"
+
 
 print("#Our compiled code:")
 print(output)  
