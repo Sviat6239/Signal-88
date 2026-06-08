@@ -3,7 +3,9 @@ import os
 code_line = []
 variables = {}
 needed_functions = set()
+
 temp_buffer_count = 0
+str_to_print_count = 0
 
 FUNCTIONS = {
     'tostr':"""
@@ -91,7 +93,14 @@ def compile_line(line):
         return f"    mov rax, [{parts[2]}]\n    mov rbx, [{parts[3]}]\n    div rbx\n    mov [{parts[1]}], rax\n"
     
     elif cmd  == 'print':
-        return "     ;print func" 
+
+        if parts[1].startswith('"'):
+            pass
+
+        str_name = f"_str_to_print_{str_to_print_count}"
+        str_to_print_count += 1
+        variables[str_name] = cnt
+        return "     mov rax, 1\n    mov rdi, 1\n   mov rsi, \n" 
 
     elif cmd == 'tostr':
         needed_functions.add('tostr')
