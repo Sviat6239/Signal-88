@@ -30,6 +30,10 @@ FUNCTIONS = {
         movzx rdx, byte [rsi]
         cmp rdx, 0
         je .done
+        cmp rdx, '0'
+        jl .done 
+        cmp rdx, '9'
+        jg .done
         sub rdx, '0'
         imul rax, rcx
         add rax, rdx
@@ -50,7 +54,7 @@ for line in f:
         code_line.append(line)
         parts = line.split()
         if parts[0] == "let":
-            variables.add(parts[1])
+            variables[parts[1]] = 'dq 0'
 
 output = "format elf64 executable 3\nentry _start\n\n"
 output += "segment readable executable\n_start:\n"            
@@ -69,10 +73,10 @@ def compile_line(line):
     cmd = parts[0]
 
     if cmd == 'let':
-        if len(parts) >= 4:
+        if parts[3].isdigit():
             return f"    mov rax, {parts[3]}\n    mov [{parts[1]}], rax\n"
         else:
-            return ""
+            return f"    mov rax, [{parts[3]}]\n    mov [{parts[1]}], rax\n"
 
     elif cmd == 'add':
         return f"    mov rax, [{parts[2]}]\n    add rax, [{parts[3]}]\n    mov [{parts[1]}], rax\n"
@@ -95,19 +99,21 @@ def compile_line(line):
         buffer_name = f"_temp_str_{temp_buffer_count}"
         temp_buffer_count += 1
 
-        variables.add(f"{buffer_name} rb 20")
+        variables[buffer_name] = 'rb 20'
 
         return f"   mov rdi, {buffer_name}\n    mov rax, [{source_var}]\n   call tostr"
 
     elif cmd == 'toint':
         needed_functions.add('toint')
         target_var = parts[1]
+        buffer_name = f"_temp_str_{temp_buffer_count}"
+        temp_buffer_count += 1
 
-        variables[target_var] = 'dq 0'
-
-        return f"    mov rsi, {target_var}\n    call toint\n    mov [{target_var}], rax"
-
+        variables[buffer_name] = 'rb 20'
+        
+        return f"    mov rsi, {buffer_name}\n    call toint\n    mov [{target_var}], rax"
     return ""
+
 for line in code_line:
     output += compile_line(line) + "\n"
 
@@ -121,9 +127,9 @@ for func_name in needed_functions:
     output += FUNCTIONS[func_name] + "\n"
 
 output += "\nsegment readable writable\n"
-for var in variables:
-    if ' ' in var:
-        output += f"    {var}\n"
+for var, declaration in variables.items():
+    if declaration == 'rb 20':
+        output += f"    {var} rb 20\n"
     else:
         output += f"    {var} dq 0\n"
 
