@@ -1,10 +1,11 @@
-let numA = 25
-let numB = 11
-
-let numC
+let numA = 10
+let numB = 20
+let numC = 0
+let numD = 5
+let numE = 2
+let numF = 3
 
 add numC numA numB
-
-let numD = 13
-
 add numC numC numD
+add numC numC numE
+add numC numC numF

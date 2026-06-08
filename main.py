@@ -40,6 +40,12 @@ def compile_line(line):
 for line in code_line:
     output += compile_line(line) + "\n"
 
+output += """
+    mov rax, 60
+    xor rdi, rdi
+    syscall
+"""    
+
 output += "\nsegment readable writable\n"
 for var in variables:
     output += f"    {var} dq 0\n"
