@@ -1,17 +1,23 @@
+#imports
 import os
 import time
 
+#array and dictionary for code parts
 code_line = []
 variables = {}
 
+#sets for pre-created functions and constants
 needed_functions = set()
 needed_constants = set()
 
+#counter variables
 temp_buffer_count = 0
 str_to_print_count = 0
 
+#start time counter
 start_time = time.perf_counter()
 
+#pre-created functions
 FUNCTIONS = {
     'tostr':"""
     tostr:
@@ -51,6 +57,7 @@ FUNCTIONS = {
     """
 }
 
+#pre-created constants
 CONSTANTS = {
     'prtln':"""
     newline db '', 10, 0
@@ -58,36 +65,39 @@ CONSTANTS = {
     """
 }
 
-file = 'code.bas'
+#file path
+file = 'code.bas' #put hear path whatever you want
 
+#opens file
 f = open(file, 'r')
 
-
+#main loop
 for line in f:
     line = line.strip()
     if line:
-        code_line.append(line)
-        parts = line.split()
+        code_line.append(line) #appends code_line by new line
+        parts = line.split() #var that contains a divided line into own tokens (parts)
         if parts[0] == "let":
             variables[parts[1]] = 'dq 0'
 
-output = "format elf64 executable 3\nentry _start\n\n"
-output += "segment readable executable\n_start:\n"            
+output = "format elf64 executable 3\nentry _start\n\n" #generating a header of elf64 asm and define start label
+output += "segment readable executable\n_start:\n" #generating code segment and put hear start label
 
-print("#Our code lines:")
-print(code_line)  
-print(" ")  
+print("#Our code lines:") # --\
+print(code_line)          # --- prints all splited lines of source code
+print(" ")                # --/
 
-print("#Our variables:")
-print(variables)
-print(" ")
+print("#Our variables:")  # --\
+print(variables)          # --- prints all variables that were defined in code (without temporary and consts that atarts with '_')
+print(" ")                # --/
 
+# the compiler
 def compile_line(line):
-    global temp_buffer_count
+    global temp_buffer_count 
     global str_to_print_count
 
-    parts = line.split()
-    cmd = parts[0]
+    parts = line.split() # splited lines by space to made an onw tokens (parts)
+    cmd = parts[0] # define command token as first element
 
     if cmd == 'let':
         if parts[3].isdigit():
@@ -154,15 +164,18 @@ def compile_line(line):
         return f"    mov rsi, {buffer_name}\n    call toint\n    mov [{target_var}], rax"
     return ""
 
+# compilation of all our saved lines in code_line variable
 for line in code_line:
     output += compile_line(line) + "\n"
 
+# generating an exit command using linux syscall
 output += """
     mov rax, 60
     xor rdi, rdi
     syscall
 """    
 
+# generating all mentioned in sourse code function bellow the exit block
 for func_name in needed_functions:
     output += FUNCTIONS[func_name] + "\n"
 
@@ -178,23 +191,26 @@ for var, declaration in variables.items():
 for const_name in needed_constants:
     output += CONSTANTS[const_name] + "\n"
 
-print("#Our compiled code:")
-print(output)  
-print(" ")                  
+print("#Our compiled code:") # --\
+print(output)                # --- prints the compiled code
+print(" ")                   # --/
         
+# writing output fasm code into a file
 with open('output.asm', 'w') as f:
     f.write(output)
     f.close
 print("Code compiled")
+
+
 end_time = time.perf_counter()
 
 comp_time = end_time - start_time
 
 output = 'output.asm'
 
-file_size = os.path.getsize(file)
-output_size = os.path.getsize(output)
+file_size = os.path.getsize(file) # computes the source code file size
+output_size = os.path.getsize(output) # computes the compiled DBASIC code into FASM code file size
 
-print(f"compiled in {comp_time:.6f} sec")
-print(f"source file: {file_size} bytes")
-print(f"output file: {output_size} bytes")
+print(f"compiled in {comp_time:.6f} sec") # prints time what was needed to compile code
+print(f"source file: {file_size} bytes") # prints sourse code size
+print(f"output file: {output_size} bytes") # prints done code size
