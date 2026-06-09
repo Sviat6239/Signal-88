@@ -46,7 +46,7 @@ FUNCTIONS = {
     """
 }
 
-file = 'code.bas'
+file = 'code1.bas'
 
 f = open(file, 'r')
 
@@ -94,12 +94,13 @@ def compile_line(line):
     
     elif cmd  == 'print':
 
-        if parts[1].startswith('"'):
-            pass
+        str_to_print = f"_str_to_print_{str_to_print_count}"
 
-        str_name = f"_str_to_print_{str_to_print_count}"
-        str_to_print_count += 1
-        variables[str_name] = cnt
+        if parts[1].startswith('"') and parts[1].endswith('"'):
+            str_to_print_count += 1
+            clean_text = parts[1].removeprefix('"').removesufix('"')
+            variables[str_to_print] = f"db {clean_text}"
+
         return "     mov rax, 1\n    mov rdi, 1\n   mov rsi, \n" 
 
     elif cmd == 'tostr':
