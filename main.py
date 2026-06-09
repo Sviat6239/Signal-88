@@ -1,4 +1,5 @@
 import os
+import time
 
 code_line = []
 variables = {}
@@ -9,6 +10,7 @@ needed_constants = set()
 temp_buffer_count = 0
 str_to_print_count = 0
 
+start_time = time.perf_counter()
 
 FUNCTIONS = {
     'tostr':"""
@@ -56,9 +58,11 @@ CONSTANTS = {
     """
 }
 
-file = 'code1.bas'
+file = 'code.bas'
 
 f = open(file, 'r')
+
+
 
 for line in f:
     line = line.strip()
@@ -182,3 +186,8 @@ print(" ")
 f = open('output.asm', 'w')   
 f.write(output)   
 print("Code compiled")
+end_time = time.perf_counter()
+
+comp_time = end_time - start_time
+
+print(f"compiled in {comp_time:.6f} sec")
