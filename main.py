@@ -182,15 +182,18 @@ print("#Our compiled code:")
 print(output)  
 print(" ")                  
         
-f = open('output.asm', 'w')   
-f.write(output)   
+with open('output.asm', 'w') as f:
+    f.write(output)
+    f.close
 print("Code compiled")
 end_time = time.perf_counter()
 
 comp_time = end_time - start_time
 
+output = 'output.asm'
+
 file_size = os.path.getsize(file)
-output_size = os.path.getsize('output.asm')
+output_size = os.path.getsize(output)
 
 print(f"compiled in {comp_time:.6f} sec")
 print(f"source file: {file_size} bytes")
