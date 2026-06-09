@@ -132,6 +132,20 @@ def compile_line(line):
                     f"    mov rdx, {len(clean_text)}\n"
                     f"    syscall\n")
 
+        elif parts[1].startswith("'"):
+            raw_str = " ".join(parts[1:])
+            clean_text = raw_str.strip("'")
+            str_label = f"_str_const_{str_to_print_count}"
+
+            variables[str_label] = f"db '{clean_text}', 0"
+            str_to_print_count += 1
+
+            return (f"    mov rax, 1\n"
+                    f"    mov rdi, 1\n"
+                    f"    mov rsi, {str_label}\n"
+                    f"    mov rdx, {len(clean_text)}\n"
+                    f"    syscall\n")
+                    
         else:
             return ""
 

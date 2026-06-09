@@ -17,7 +17,8 @@ add numC numC numD
 mul numC numC numA
 div numC numG numD
 
-print "text"
+print "text text text"
+print 'another text text text'
 tostr numA
 print numA
 toint numA
