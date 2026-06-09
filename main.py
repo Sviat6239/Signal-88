@@ -2,10 +2,13 @@ import os
 
 code_line = []
 variables = {}
+
 needed_functions = set()
+needed_constants = set()
 
 temp_buffer_count = 0
 str_to_print_count = 0
+
 
 FUNCTIONS = {
     'tostr':"""
@@ -43,6 +46,13 @@ FUNCTIONS = {
         jmp .loop
     .done:
         ret
+    """
+}
+
+CONSTANTS = {
+    'prtln':"""
+    newline db '', 10, 0
+    newline_len = $ - newline
     """
 }
 
@@ -112,6 +122,14 @@ def compile_line(line):
         else:
             return ""
 
+    elif cmd == 'prtln':
+        needed_constants.add('prtln')
+        return (f"    mov rax, 1\n"
+                f"    mov rdi, 1\n"
+                f"    mov rsi, newline\n"
+                f"    mov rdx, newline_len\n"
+                f"    syscall\n")
+
     elif cmd == 'tostr':
         needed_functions.add('tostr')
         source_var = parts[1]
@@ -120,7 +138,7 @@ def compile_line(line):
 
         variables[buffer_name] = 'rb 20'
 
-        return f"   mov rdi, {buffer_name}\n    mov rax, [{source_var}]\n   call tostr"
+        return f"    mov rdi, {buffer_name}\n    mov rax, [{source_var}]\n    call tostr"
 
     elif cmd == 'toint':
         needed_functions.add('toint')
@@ -153,6 +171,9 @@ for var, declaration in variables.items():
         output += f"    {var} rb 20\n"
     else:
         output += f"    {var} dq 0\n"
+
+for const_name in needed_constants:
+    output += CONSTANTS[const_name] + "\n"
 
 print("#Our compiled code:")
 print(output)  
