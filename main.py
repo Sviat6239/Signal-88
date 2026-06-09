@@ -145,7 +145,7 @@ def compile_line(line):
                     f"    mov rsi, {str_label}\n"
                     f"    mov rdx, {len(clean_text)}\n"
                     f"    syscall\n")
-                    
+
         else:
             return ""
 
@@ -215,11 +215,13 @@ with open('output.asm', 'w') as f:
     f.close
 print("Code compiled")
 
-
+# end time counter
 end_time = time.perf_counter()
 
+# computes time what was needed to compile
 comp_time = end_time - start_time
 
+# path to genereted code for size computing
 output = 'output.asm'
 
 file_size = os.path.getsize(file) # computes the source code file size
