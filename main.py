@@ -71,6 +71,8 @@ print(" ")
 
 def compile_line(line):
     global temp_buffer_count
+    global str_to_print_count
+
     parts = line.split()
     cmd = parts[0]
 
@@ -92,16 +94,23 @@ def compile_line(line):
     elif cmd == 'div':
         return f"    mov rax, [{parts[2]}]\n    mov rbx, [{parts[3]}]\n    div rbx\n    mov [{parts[1]}], rax\n"
     
-    elif cmd  == 'print':
+    elif cmd == 'print':
+        if parts[1].startswith('"'):
+            raw_str = " ".join(parts[1:])
+            clean_text = raw_str.strip('"')
+            str_label = f"_str_const_{str_to_print_count}"
 
-        str_to_print = f"_str_to_print_{str_to_print_count}"
-
-        if parts[1].startswith('"') and parts[1].endswith('"'):
+            variables[str_label] = f"db '{clean_text}', 0"
             str_to_print_count += 1
-            clean_text = parts[1].removeprefix('"').removesufix('"')
-            variables[str_to_print] = f"db {clean_text}"
 
-        return "     mov rax, 1\n    mov rdi, 1\n   mov rsi, \n" 
+            return (f"    mov rax, 1\n"
+                    f"    mov rdi, 1\n"
+                    f"    mov rsi, {str_label}\n"
+                    f"    mov rdx, {len(clean_text)}\n"
+                    f"    syscall\n")
+
+        else:
+            return ""
 
     elif cmd == 'tostr':
         needed_functions.add('tostr')
@@ -138,11 +147,12 @@ for func_name in needed_functions:
 
 output += "\nsegment readable writable\n"
 for var, declaration in variables.items():
-    if declaration == 'rb 20':
+    if declaration.startswith('db'):
+        output += f"    {var} {declaration}\n"
+    elif declaration == 'rb 20':
         output += f"    {var} rb 20\n"
     else:
         output += f"    {var} dq 0\n"
-
 
 print("#Our compiled code:")
 print(output)  
