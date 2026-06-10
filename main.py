@@ -205,6 +205,12 @@ def compile_line(line):
 
         return f"    mov rsi, {buffer_name}\n    call toint\n    mov [{target_var}], rax"
 
+    elif cmd == "if":
+        return "THERE IS A IF LABEL"
+
+    elif cmd == "end":
+        return "THERE IS AN END LABEL"
+
     return ""
 
 # compilation of all our saved lines in code_line variable
