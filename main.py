@@ -232,10 +232,12 @@ def compile_line(line):
             clean_text = raw_str.strip('"')
             str_label = f"_str_const_{str_to_print_count}"
 
-            # declare a data constant for the string
+            # Store the literal in the writable data section so the runtime can
+            # print it by address.
             variables[str_label] = f"db '{clean_text}', 0"
             str_to_print_count += 1
 
+            # Find the null terminator and pass the exact byte count to write.
             return (f"    mov rax, 1\n"
                 f"    mov rdi, 1\n"
                 f"    mov rsi, {str_label}\n"
@@ -255,9 +257,11 @@ def compile_line(line):
             clean_text = raw_str.strip("'")
             str_label = f"_str_const_{str_to_print_count}"
 
+            # Single-quoted text is handled the same way as double-quoted text.
             variables[str_label] = f"db '{clean_text}', 0"
             str_to_print_count += 1
 
+            # Reuse the same null-terminated length scan before the syscall.
             return (f"    mov rax, 1\n"
                     f"    mov rdi, 1\n"
                     f"    mov rsi, {str_label}\n"
@@ -276,8 +280,12 @@ def compile_line(line):
             # stored string pointer; otherwise we do not have a direct
             # integer-to-text printer yet.
             source_name = parts[1]
+
+            # `tostr` stores the actual string start address in a pointer slot,
+            # so `print` can reuse the generated buffer without recomputing it.
             if source_name in string_buffers:
                 pointer_name = string_buffers[source_name]
+                # Read the pointer, measure the resulting string, and write it.
                 return (f"    mov rax, 1\n"
                         f"    mov rsi, [{pointer_name}]\n"
                         f"    mov rdi, rsi\n"
@@ -291,7 +299,9 @@ def compile_line(line):
                         f"    syscall\n")
 
             declaration = variables.get(source_name)
+            # Raw input buffers are already strings, so they can be printed as-is.
             if declaration and declaration.startswith('rb '):
+                # Measure the buffer up to the zero terminator before writing it.
                 return (f"    mov rax, 1\n"
                         f"    mov rsi, {source_name}\n"
                         f"    mov rdi, rsi\n"
@@ -305,7 +315,9 @@ def compile_line(line):
                         f"    syscall\n")
 
             declaration = variables.get(source_name)
+            # Static text declared with `db` is also written directly by address.
             if declaration and declaration.startswith('db '):
+                # Same length-scan pattern as the other string-printing paths.
                 return (f"    mov rax, 1\n"
                         f"    mov rdi, 1\n"
                         f"    mov rsi, {source_name}\n"
@@ -319,6 +331,7 @@ def compile_line(line):
                         f"    mov rdi, 1\n"
                         f"    syscall\n")
 
+            # Unknown value types are ignored for now rather than crashing.
             return ""
 
     # print newline helper
@@ -337,6 +350,8 @@ def compile_line(line):
         buffer_name = parts[1]
         buffer_decl = variables.get(buffer_name)
 
+        # Use the declared buffer size when available; otherwise fall back to a
+        # small fixed input buffer so the generated code can still read safely.
         if buffer_decl and buffer_decl.startswith('rb '):
             buffer_size = buffer_decl.split()[1]
         else:
@@ -359,6 +374,8 @@ def compile_line(line):
 
         declaration = variables.get(source_var)
         if declaration and declaration.startswith('rb '):
+            # Buffers coming from `read` contain text, so parse them to an
+            # integer first and then format that value back into a temp string.
             # For input buffers, first parse the text as an integer and then
             # convert that integer back to a string in a dedicated temp buffer.
             needed_functions.add('toint')
@@ -380,6 +397,8 @@ def compile_line(line):
         pointer_name = f"_temp_str_ptr_{temp_buffer_count}"
         temp_buffer_count += 1
 
+        # Reserve a temporary string buffer and remember where `tostr` placed
+        # the actual start address so later `print` calls can reuse it.
         variables[buffer_name] = 'rb 20'  # reserve 20 bytes for the string
         variables[pointer_name] = 'dq 0'   # store the actual start pointer returned by tostr
         # remember which pointer belongs to this variable so `print` can reuse it
@@ -397,6 +416,8 @@ def compile_line(line):
         buffer_name = f"_temp_str_{temp_buffer_count}"
         temp_buffer_count += 1
 
+        # Read text from stdin into a temporary buffer, terminate it, and let
+        # the helper convert the digits into a numeric value.
         variables[buffer_name] = 'rb 20'
 
         return (
@@ -494,6 +515,8 @@ def compile_line(line):
     return ""
 
 # compilation of all our saved lines in code_line variable
+    # Each source line expands to one or more assembly instructions that are
+    # appended to the executable text section in order.
 for line in code_line:
     # compile each collected source line into assembly and append
     output += compile_line(line) + "\n"
@@ -527,6 +550,8 @@ for const_name in needed_constants:
 # end time counter
 end_time = time.perf_counter()
 
+# Print the generated assembly and save it to disk so the compiler can be used
+# as a simple one-step source-to-output tool.
 print("#Our compiled code:") # --\
 print(output)                # --- prints the compiled code
 print(" ")                   # --/
