@@ -176,6 +176,27 @@ def compile_line(line):
         asm += f"    {jump} {false_label}\n"
         return asm
 
+    def compile_numeric_operand(token, target_reg):
+        """Load a token as a numeric value into target_reg.
+
+        Numeric literals are moved directly. Variables backed by string
+        buffers are parsed with `toint` first so arithmetic works on the
+        actual digits instead of the raw ASCII bytes.
+        """
+        declaration = variables.get(token)
+
+        if token.lstrip('-').isdigit():
+            return f"    mov {target_reg}, {token}\n"
+
+        if declaration and (declaration.startswith('rb ') or declaration.startswith('db ')):
+            needed_functions.add('toint')
+            asm = f"    mov rsi, {token}\n    call toint\n"
+            if target_reg != 'rax':
+                asm += f"    mov {target_reg}, rax\n"
+            return asm
+
+        return f"    mov {target_reg}, [{token}]\n"
+
     # Simple assignment: let X = 123  or let X = Y
     if cmd == 'let':
         if len(parts) == 2:
@@ -207,22 +228,39 @@ def compile_line(line):
     elif cmd == 'add':
         if len(parts) < 4:
             raise ValueError(f"Malformed add statement: {line}")
-        return f"    mov rax, [{parts[2]}]\n    add rax, [{parts[3]}]\n    mov [{parts[1]}], rax\n"
+        return (
+            compile_numeric_operand(parts[3], 'rbx')
+            + compile_numeric_operand(parts[2], 'rax')
+            + f"    add rax, rbx\n    mov [{parts[1]}], rax\n"
+        )
 
     elif cmd == 'sub':
         if len(parts) < 4:
             raise ValueError(f"Malformed sub statement: {line}")
-        return f"    mov rax, [{parts[2]}]\n    sub rax, [{parts[3]}]\n    mov [{parts[1]}], rax\n"
+        return (
+            compile_numeric_operand(parts[3], 'rbx')
+            + compile_numeric_operand(parts[2], 'rax')
+            + f"    sub rax, rbx\n    mov [{parts[1]}], rax\n"
+        )
 
     elif cmd == 'mul':
         if len(parts) < 4:
             raise ValueError(f"Malformed mul statement: {line}")
-        return f"    mov rax, [{parts[2]}]\n    mov rbx, [{parts[3]}]\n    mul rbx\n    mov [{parts[1]}], rax\n"
+        return (
+            compile_numeric_operand(parts[3], 'rbx')
+            + compile_numeric_operand(parts[2], 'rax')
+            + f"    mul rbx\n    mov [{parts[1]}], rax\n"
+        )
 
     elif cmd == 'div':
         if len(parts) < 4:
             raise ValueError(f"Malformed div statement: {line}")
-        return f"    mov rax, [{parts[2]}]\n    mov rbx, [{parts[3]}]\n    xor rdx, rdx\n    div rbx\n    mov [{parts[1]}], rax\n"
+        return (
+            compile_numeric_operand(parts[3], 'rbx')
+            + compile_numeric_operand(parts[2], 'rax')
+            + "    xor rdx, rdx\n    div rbx\n"
+            + f"    mov [{parts[1]}], rax\n"
+        )
 
     elif cmd == 'mov':
         if len(parts) < 3:
