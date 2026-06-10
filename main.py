@@ -20,6 +20,8 @@ needed_constants = set()
 # counters used to generate unique temporary labels
 temp_buffer_count = 0
 str_to_print_count = 0
+if_label_count = 0
+if_stack = []
 
 # Pre-defined assembly helpers. When a source line requests a helper
 # (for example the `tostr` or `toint` runtime), we add its name to
@@ -110,9 +112,43 @@ def compile_line(line):
     """
     global temp_buffer_count
     global str_to_print_count
+    global if_label_count
+    global if_stack
 
     parts = line.split()
     cmd = parts[0]
+
+    def compile_operand(token):
+        if token.lstrip('-').isdigit():
+            return token, None
+        return f"[{token}]", token
+
+    def compile_condition(left_token, operator, right_token, false_label):
+        left_operand, left_var = compile_operand(left_token)
+        right_operand, right_var = compile_operand(right_token)
+
+        asm = f"    mov rax, {left_operand}\n"
+        if left_var is not None and right_var is not None:
+            asm += f"    mov rbx, {right_operand}\n"
+            asm += "    cmp rax, rbx\n"
+        else:
+            asm += f"    cmp rax, {right_operand}\n"
+
+        jump_map = {
+            '==': 'jne',
+            '!=': 'je',
+            '<': 'jge',
+            '<=': 'jg',
+            '>': 'jle',
+            '>=': 'jl',
+        }
+
+        jump = jump_map.get(operator)
+        if jump is None:
+            raise ValueError(f"Unsupported operator in if-condition: {operator}")
+
+        asm += f"    {jump} {false_label}\n"
+        return asm
 
     # Simple assignment: let X = 123  or let X = Y
     if cmd == 'let':
@@ -206,10 +242,63 @@ def compile_line(line):
         return f"    mov rsi, {buffer_name}\n    call toint\n    mov [{target_var}], rax"
 
     elif cmd == "if":
-        return "THERE IS A IF LABEL"
+        if len(parts) < 5:
+            raise ValueError(f"Malformed if statement: {line}")
 
-    elif cmd == "end":
-        return "THERE IS AN END LABEL"
+        end_label = f"_if_end_{if_label_count}"
+        false_label = f"_if_false_{if_label_count}"
+        if_label_count += 1
+
+        if_stack.append({
+            'end_label': end_label,
+            'false_label': false_label,
+            'has_else': False,
+        })
+
+        return compile_condition(parts[1], parts[2], parts[3], false_label)
+
+    elif cmd == "elseif":
+        if not if_stack:
+            raise ValueError(f"elseif without matching if: {line}")
+        if len(parts) < 5:
+            raise ValueError(f"Malformed elseif statement: {line}")
+
+        current = if_stack[-1]
+        new_false_label = f"_if_false_{if_label_count}"
+        if_label_count += 1
+
+        asm = (
+            f"    jmp {current['end_label']}\n"
+            f"{current['false_label']}:\n"
+        )
+        asm += compile_condition(parts[1], parts[2], parts[3], new_false_label)
+        current['false_label'] = new_false_label
+        return asm
+
+    elif cmd == "else":
+        if not if_stack:
+            raise ValueError(f"else without matching if: {line}")
+
+        current = if_stack[-1]
+        if current['has_else']:
+            raise ValueError(f"duplicate else in the same if block: {line}")
+        current['has_else'] = True
+
+        return (
+            f"    jmp {current['end_label']}\n"
+            f"{current['false_label']}:\n"
+        )
+
+    elif cmd == "end" and len(parts) > 1 and parts[1] == "if":
+        if not if_stack:
+            raise ValueError(f"end if without matching if: {line}")
+
+        current = if_stack.pop()
+        asm = ""
+        if not current['has_else']:
+            asm += f"{current['false_label']}:\n"
+        asm += f"{current['end_label']}:\n"
+        return asm
 
     return ""
 
