@@ -6,15 +6,16 @@ It reads a small BASIC-like source file, converts it into FASM-compatible x86_64
 ## Files
 
 - `main.py` - the compiler script.
-- `code.bas` - the default source file compiled by `main.py`.
+- `code5.bas` - the default source file compiled by `main.py`.
 - `code1.bas` - an additional sample source file you can use or rename.
-- `code3.bas` and `code4.bas` - extra sample programs used for testing edge cases.
+- `code2.bas`, `code3.bas`, and `code4.bas` - extra sample programs used for testing edge cases.
 - `output.asm` - generated assembly output.
 
 ## What It Supports
 
 - Variable assignment with `let`.
 - Arithmetic operations with `add`, `sub`, `mul`, and `div`.
+- Arithmetic on numeric input buffers works by converting the buffer text to integers first.
 - Output with `print` and `prtln`.
 - Input with `read`.
 - Runtime helpers for converting numbers to strings and strings to numbers with `tostr` and `toint`.
@@ -62,7 +63,7 @@ end if
 
 ## Quick Start
 
-1. Edit `code.bas` in the project root.
+1. Edit `code5.bas` in the project root, or change the `file` variable in `main.py` to point at a different source.
 2. Run the compiler:
 
 ```bash
@@ -84,7 +85,8 @@ chmod +x output
 - String literal handling is naive and does not support escaped quotes.
 - Variables declared with `let` are stored as 64-bit values unless they are declared as buffers.
 - The generated assembly uses Linux syscalls, so the output is intended for ELF64/Linux-style execution.
-- `main.py` always reads `code.bas` by default; change the `file` variable near the top of the script if you want a different input file.
+- `main.py` reads `code5.bas` by default; change the `file` variable near the top of the script if you want a different input file.
+- String-backed numeric inputs are parsed with `toint` before arithmetic so `add`, `sub`, `mul`, and `div` operate on values, not ASCII bytes.
 
 ## Example `code.bas`
 
