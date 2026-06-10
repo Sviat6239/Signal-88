@@ -1,3 +1,7 @@
+import os
+import time
+from main import *
+
 
 # Pre-defined assembly helpers. When a source line requests a helper
 # (for example the `tostr` or `toint` runtime), we add its name to
@@ -195,3 +199,23 @@ output += """
     mov rax, 60
     xor rdi, rdi
     syscall
+"""
+
+# generating all mentioned in sourse code function bellow the exit block
+for func_name in needed_functions:
+    # emit helper function code if requested by the source
+    output += FUNCTIONS[func_name] + "\n"
+
+output += "\nsegment readable writable\n"
+for var, declaration in variables.items():
+    # emit data declarations collected while compiling lines
+    if declaration.startswith('db'):
+        output += f"    {var} {declaration}\n"
+    elif declaration == 'rb 20':
+        output += f"    {var} rb 20\n"
+    else:
+        output += f"    {var} dq 0\n"
+
+for const_name in needed_constants:
+    # emit any required constant blocks (e.g. newline bytes)
+    output += CONSTANTS[const_name] + "\n"

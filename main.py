@@ -5,6 +5,7 @@
 # pipeline: parse -> compile lines -> emit assembly + data sections.
 import os
 import time
+from linux64 import *
 
 # `code_line` holds non-empty, stripped source lines in order.
 # `variables` collects declared variables and string constants used
@@ -20,26 +21,6 @@ needed_constants = set()
 # counters used to generate unique temporary labels
 temp_buffer_count = 0
 str_to_print_count = 0
-
-
-# generating all mentioned in sourse code function bellow the exit block
-for func_name in needed_functions:
-    # emit helper function code if requested by the source
-    output += FUNCTIONS[func_name] + "\n"
-
-output += "\nsegment readable writable\n"
-for var, declaration in variables.items():
-    # emit data declarations collected while compiling lines
-    if declaration.startswith('db'):
-        output += f"    {var} {declaration}\n"
-    elif declaration == 'rb 20':
-        output += f"    {var} rb 20\n"
-    else:
-        output += f"    {var} dq 0\n"
-
-for const_name in needed_constants:
-    # emit any required constant blocks (e.g. newline bytes)
-    output += CONSTANTS[const_name] + "\n"
 
 # end time counter
 end_time = time.perf_counter()
