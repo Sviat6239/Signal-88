@@ -1,49 +1,93 @@
 # dummyBASIC
 
-A tiny educational DBASIC -> FASM compiler written in Python.
+`dummyBASIC` is a tiny educational DBASIC -> FASM compiler written in Python.
+It reads a simple BASIC-like source file, converts it into FASM-compatible x86_64 assembly, and writes the result to `output.asm`.
 
-This repository contains:
-- `main.py` — the compiler script that reads `code.bas` and emits `output.asm`.
-- `code.bas` — example/source file you can edit (use your own file name if desired).
+## Files
 
-Features
-- Very small BASIC-like language: `let`, `add`, `sub`, `mul`, `div`, `print`, `prtln`, `tostr`, `toint`.
-- Emits FASM-compatible x86_64 assembly and a data segment for strings/variables.
-- Minimal runtime helpers (`tostr`, `toint`) are injected only when used.
+- `main.py` - the compiler script.
+- `code.bas` - the default source file compiled by `main.py`.
+- `code1.bas` - an additional sample source file you can use or rename.
+- `output.asm` - generated assembly output.
 
-Prerequisites
-- Python 3.7+ to run the compiler (`main.py`).
-- (Optional) FASM (Flat Assembler) if you want to assemble the generated `output.asm` into an executable. On Windows you can use WSL to assemble ELF binaries for Linux.
+## Features
 
-Quick Start
-1. Edit or create your `code.bas` in the project root.
+- Variable assignment with `let`.
+- Arithmetic operations with `add`, `sub`, `mul`, and `div`.
+- Output with `print` and `prtln`.
+- Runtime helpers for converting numbers to strings and strings to numbers with `tostr` and `toint`.
+- Conditional flow with `if`, `elseif`, `else`, and `end if`.
+- Generates a readable text section and a writable data section automatically.
+
+## Example Language
+
+The current compiler supports a very small instruction set:
+
+```text
+let name = 10
+add result left right
+sub result left right
+mul result left right
+div result left right
+print "hello"
+prtln
+tostr value
+toint target
+if a == 10 then
+elseif a == 5 then
+else
+end if
+```
+
+## Prerequisites
+
+- Python 3.7+ to run `main.py`.
+- Optional: FASM (Flat Assembler) if you want to assemble the generated `output.asm` into an executable.
+- On Windows, WSL is the easiest way to assemble and run the ELF64 output.
+
+## Quick Start
+
+1. Edit `code.bas` in the project root.
 2. Run the compiler:
 
 ```bash
 python main.py
 ```
 
-3. The compiler writes `output.asm`. To assemble (example for Linux/WSL):
+3. The compiler writes `output.asm`.
+4. Assemble and run it if you have FASM installed:
 
 ```bash
-# install fasm (platform-specific) then
 fasm output.asm output
 chmod +x output
 ./output
 ```
 
-Notes & Limitations
-- The compiler is intentionally minimal and does not validate malformed input.
-- String literal handling is naive (no escaped quotes); use simple strings.
-- Variable declarations are created automatically for `let` statements and stored as 64-bit words (`dq 0`).
-- The generated assembly uses Linux syscalls (ELF64). To run on Windows, assemble/target appropriately or run under WSL.
+## Notes
 
-Example `code.bas`
-```
+- The compiler is intentionally minimal and does not yet validate malformed input very deeply.
+- String literal handling is naive and does not support escaped quotes.
+- Variables declared with `let` are stored as 64-bit values (`dq 0`).
+- `print` currently handles string literals directly. If you want to print a number as text, convert it first with `tostr` and then print the variable.
+- The generated assembly uses Linux syscalls, so the output is intended for ELF64/Linux-style execution.
+
+## Example `code.bas`
+
+```text
 let a = 10
 let b = 20
 add c a b
-print "Hello, world"
+
+tostr a
+print a
 prtln
+
+if a == 10 then
+	print "ten"
+elseif a == 5 then
+	print "five"
+else
+	print "other"
+end if
 ```
 
