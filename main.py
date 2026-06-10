@@ -81,7 +81,7 @@ CONSTANTS = {
 }
 
 # source file to compile. Change to any path as needed.
-file = 'code4.bas'  # put here the path to your source file
+file = 'code.bas'  # put here the path to your source file
 
 # start a timer to show compilation duration
 start_time = time.perf_counter()
@@ -222,7 +222,7 @@ def compile_line(line):
     elif cmd == 'div':
         if len(parts) < 4:
             raise ValueError(f"Malformed div statement: {line}")
-        return f"    mov rax, [{parts[2]}]\n    mov rbx, [{parts[3]}]\n    div rbx\n    mov [{parts[1]}], rax\n"
+        return f"    mov rax, [{parts[2]}]\n    mov rbx, [{parts[3]}]\n    xor rdx, rdx\n    div rbx\n    mov [{parts[1]}], rax\n"
 
     # print string literal or variable
     elif cmd == 'print':
@@ -236,12 +236,18 @@ def compile_line(line):
             variables[str_label] = f"db '{clean_text}', 0"
             str_to_print_count += 1
 
-            # syscall write(1, str, len)
             return (f"    mov rax, 1\n"
-                    f"    mov rdi, 1\n"
-                    f"    mov rsi, {str_label}\n"
-                    f"    mov rdx, {len(clean_text)}\n"
-                    f"    syscall\n")
+                f"    mov rdi, 1\n"
+                f"    mov rsi, {str_label}\n"
+                f"    mov rdi, rsi\n"
+                f"    mov rcx, -1\n"
+                f"    xor al, al\n"
+                f"    repne scasb\n"
+                f"    not rcx\n"
+                f"    dec rcx\n"
+                f"    mov rdx, rcx\n"
+                f"    mov rdi, 1\n"
+                f"    syscall\n")
 
         # string with single quotes
         elif parts[1].startswith("'"):
@@ -255,7 +261,14 @@ def compile_line(line):
             return (f"    mov rax, 1\n"
                     f"    mov rdi, 1\n"
                     f"    mov rsi, {str_label}\n"
-                    f"    mov rdx, {len(clean_text)}\n"
+                    f"    mov rdi, rsi\n"
+                    f"    mov rcx, -1\n"
+                    f"    xor al, al\n"
+                    f"    repne scasb\n"
+                    f"    not rcx\n"
+                    f"    dec rcx\n"
+                    f"    mov rdx, rcx\n"
+                    f"    mov rdi, 1\n"
                     f"    syscall\n")
 
         else:
@@ -293,11 +306,17 @@ def compile_line(line):
 
             declaration = variables.get(source_name)
             if declaration and declaration.startswith('db '):
-                clean_text = declaration[4:].rsplit(',', 1)[0].strip().strip("'")
                 return (f"    mov rax, 1\n"
                         f"    mov rdi, 1\n"
                         f"    mov rsi, {source_name}\n"
-                        f"    mov rdx, {len(clean_text)}\n"
+                        f"    mov rdi, rsi\n"
+                        f"    mov rcx, -1\n"
+                        f"    xor al, al\n"
+                        f"    repne scasb\n"
+                        f"    not rcx\n"
+                        f"    dec rcx\n"
+                        f"    mov rdx, rcx\n"
+                        f"    mov rdi, 1\n"
                         f"    syscall\n")
 
             return ""
@@ -380,7 +399,18 @@ def compile_line(line):
 
         variables[buffer_name] = 'rb 20'
 
-        return f"    mov rsi, {buffer_name}\n    call toint\n    mov [{target_var}], rax"
+        return (
+            f"    mov rax, 0\n"
+            f"    mov rdi, 0\n"
+            f"    mov rsi, {buffer_name}\n"
+            f"    mov rdx, 20\n"
+            f"    dec rdx\n"
+            f"    syscall\n"
+            f"    mov byte [{buffer_name} + rax], 0\n"
+            f"    mov rsi, {buffer_name}\n"
+            f"    call toint\n"
+            f"    mov [{target_var}], rax"
+        )
 
     elif cmd == "if":
         # Parse: if <left> <operator> <right> then
