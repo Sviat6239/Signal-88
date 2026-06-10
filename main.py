@@ -658,9 +658,6 @@ for const_name in needed_constants:
     # emit any required constant blocks (e.g. newline bytes)
     output += CONSTANTS[const_name] + "\n"
 
-# end time counter
-end_time = time.perf_counter()
-
 # Print the generated assembly and save it to disk so the compiler can be used
 # as a simple one-step source-to-output tool.
 print("#Our compiled code:") # --\
@@ -672,6 +669,9 @@ with open('output.asm', 'w') as f:
     f.write(output)
     f.close
 print("Code compiled")
+
+# end time counter
+end_time = time.perf_counter()
 
 # computes time what was needed to compile
 comp_time = end_time - start_time
