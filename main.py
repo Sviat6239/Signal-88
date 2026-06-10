@@ -81,7 +81,7 @@ CONSTANTS = {
 }
 
 # source file to compile. Change to any path as needed.
-file = 'code.bas'  # put here the path to your source file
+file = 'code2.bas'  # put here the path to your source file
 
 # start a timer to show compilation duration
 start_time = time.perf_counter()
@@ -223,6 +223,11 @@ def compile_line(line):
         if len(parts) < 4:
             raise ValueError(f"Malformed div statement: {line}")
         return f"    mov rax, [{parts[2]}]\n    mov rbx, [{parts[3]}]\n    xor rdx, rdx\n    div rbx\n    mov [{parts[1]}], rax\n"
+
+    elif cmd == 'mov':
+        if len(parts) < 3:
+            raise ValueError(f"Malformed mov statement: {line}")
+        return f"    mov [{parts[1]}], [{parts[2]}]"    
 
     # print string literal or variable
     elif cmd == 'print':
