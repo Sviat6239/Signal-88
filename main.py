@@ -81,7 +81,7 @@ CONSTANTS = {
 }
 
 # source file to compile. Change to any path as needed.
-file = 'code2.bas'  # put here the path to your source file
+file = 'code5.bas'  # put here the path to your source file
 
 # start a timer to show compilation duration
 start_time = time.perf_counter()
