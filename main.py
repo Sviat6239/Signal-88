@@ -119,21 +119,35 @@ def compile_line(line):
     cmd = parts[0]
 
     def compile_operand(token):
+        """Check if token is a numeric immediate or a variable reference.
+        Returns (operand_str, var_name_or_none).
+        - If numeric: returns (number, None)
+        - If variable: returns ([varname], varname)  for indirect addressing
+        """
         if token.lstrip('-').isdigit():
             return token, None
         return f"[{token}]", token
 
     def compile_condition(left_token, operator, right_token, false_label):
+        """Compile a conditional expression (left_token operator right_token).
+        Generates assembly that loads operands and jumps to false_label if condition is false.
+        Handles comparisons: ==, !=, <, <=, >, >=
+        Returns the assembly code string.
+        """
         left_operand, left_var = compile_operand(left_token)
         right_operand, right_var = compile_operand(right_token)
 
+        # Load left operand into rax
         asm = f"    mov rax, {left_operand}\n"
+        # If both are variables, load right into rbx and compare two registers
         if left_var is not None and right_var is not None:
             asm += f"    mov rbx, {right_operand}\n"
             asm += "    cmp rax, rbx\n"
         else:
+            # Otherwise, compare rax with immediate or variable directly
             asm += f"    cmp rax, {right_operand}\n"
 
+        # Map operators to inverse jump instructions (we jump if condition is false)
         jump_map = {
             '==': 'jne',
             '!=': 'je',
@@ -147,6 +161,7 @@ def compile_line(line):
         if jump is None:
             raise ValueError(f"Unsupported operator in if-condition: {operator}")
 
+        # Append jump instruction to false_label if condition fails
         asm += f"    {jump} {false_label}\n"
         return asm
 
@@ -242,61 +257,81 @@ def compile_line(line):
         return f"    mov rsi, {buffer_name}\n    call toint\n    mov [{target_var}], rax"
 
     elif cmd == "if":
+        # Parse: if <left> <operator> <right> then
+        # Note: 'then' is optional and ignored during tokenization
         if len(parts) < 5:
             raise ValueError(f"Malformed if statement: {line}")
 
+        # Generate unique labels for this if block
         end_label = f"_if_end_{if_label_count}"
         false_label = f"_if_false_{if_label_count}"
         if_label_count += 1
 
+        # Push control state onto stack (will be popped by 'end if')
         if_stack.append({
-            'end_label': end_label,
-            'false_label': false_label,
-            'has_else': False,
+            'end_label': end_label,      # where to jump when entire if/elseif/else block is done
+            'false_label': false_label,  # where to jump if this condition fails
+            'has_else': False,           # track if an else clause has been seen
         })
 
+        # Generate condition check and conditional jump to false_label
         return compile_condition(parts[1], parts[2], parts[3], false_label)
 
     elif cmd == "elseif":
+        # Parse: elseif <left> <operator> <right> then
         if not if_stack:
             raise ValueError(f"elseif without matching if: {line}")
         if len(parts) < 5:
             raise ValueError(f"Malformed elseif statement: {line}")
 
         current = if_stack[-1]
+        # Generate new false label for this elseif's condition
         new_false_label = f"_if_false_{if_label_count}"
         if_label_count += 1
 
+        # If previous if/elseif block was taken, jump to end_label
+        # Otherwise, place label where previous false_label pointed to
         asm = (
             f"    jmp {current['end_label']}\n"
             f"{current['false_label']}:\n"
         )
+        # Check the new elseif condition and jump to new_false_label if fails
         asm += compile_condition(parts[1], parts[2], parts[3], new_false_label)
+        # Update stack so next elseif/else uses new_false_label
         current['false_label'] = new_false_label
         return asm
 
     elif cmd == "else":
+        # else block (no condition): label previous false_label and prepare to skip to end
         if not if_stack:
             raise ValueError(f"else without matching if: {line}")
 
         current = if_stack[-1]
+        # Verify only one else per if block
         if current['has_else']:
             raise ValueError(f"duplicate else in the same if block: {line}")
         current['has_else'] = True
 
+        # Jump to end_label if we took any previous condition
+        # Place label at false_label so code falls through to else block
         return (
             f"    jmp {current['end_label']}\n"
             f"{current['false_label']}:\n"
         )
 
     elif cmd == "end" and len(parts) > 1 and parts[1] == "if":
+        # end if: close the if/elseif/else block and place end_label
         if not if_stack:
             raise ValueError(f"end if without matching if: {line}")
 
+        # Pop control state for this if block
         current = if_stack.pop()
         asm = ""
+        # If there was no else clause, place the final false_label here
+        # (so if all conditions fail, execution continues from here)
         if not current['has_else']:
             asm += f"{current['false_label']}:\n"
+        # Place end_label to mark end of entire if/elseif/else block
         asm += f"{current['end_label']}:\n"
         return asm
 
