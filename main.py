@@ -77,7 +77,7 @@ CONSTANTS = {
 }
 
 # source file to compile. Change to any path as needed.
-file = 'code.bas'  # put here the path to your source file
+file = 'code4.bas'  # put here the path to your source file
 
 # start a timer to show compilation duration
 start_time = time.perf_counter()
@@ -171,7 +171,21 @@ def compile_line(line):
 
     # Simple assignment: let X = 123  or let X = Y
     if cmd == 'let':
-        if parts[3].isdigit():
+        if len(parts) == 2:
+            # Bare declaration such as `let buff` is handled in the
+            # pre-scan phase and does not need emitted code here.
+            return ""
+
+        if len(parts) < 4:
+            raise ValueError(f"Malformed let statement: {line}")
+
+        if parts[3].startswith('"'):
+            raw_str = " ".join(parts[3:])
+            clean_text = raw_str.strip('"')
+            str_label = f"_str_const_{str_to_print_count}"
+
+            variables[str_label] = f"db '{clean_text}', 0"
+        elif parts[3].isdigit():
             # immediate numeric assignment
             return f"    mov rax, {parts[3]}\n    mov [{parts[1]}], rax\n"
         else:
@@ -180,15 +194,23 @@ def compile_line(line):
 
     # arithmetic operations: add, sub, mul, div
     elif cmd == 'add':
+        if len(parts) < 4:
+            raise ValueError(f"Malformed add statement: {line}")
         return f"    mov rax, [{parts[2]}]\n    add rax, [{parts[3]}]\n    mov [{parts[1]}], rax\n"
 
     elif cmd == 'sub':
+        if len(parts) < 4:
+            raise ValueError(f"Malformed sub statement: {line}")
         return f"    mov rax, [{parts[2]}]\n    sub rax, [{parts[3]}]\n    mov [{parts[1]}], rax\n"
 
     elif cmd == 'mul':
+        if len(parts) < 4:
+            raise ValueError(f"Malformed mul statement: {line}")
         return f"    mov rax, [{parts[2]}]\n    mov rbx, [{parts[3]}]\n    mul rbx\n    mov [{parts[1]}], rax\n"
 
     elif cmd == 'div':
+        if len(parts) < 4:
+            raise ValueError(f"Malformed div statement: {line}")
         return f"    mov rax, [{parts[2]}]\n    mov rbx, [{parts[3]}]\n    div rbx\n    mov [{parts[1]}], rax\n"
 
     # print string literal or variable
