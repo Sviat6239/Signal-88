@@ -29,6 +29,10 @@ string_buffers = {}
 # Pre-defined assembly helpers. When a source line requests a helper
 # (for example the `tostr` or `toint` runtime), we add its name to
 # `needed_functions` and emit the corresponding assembly below.
+# `tostr` walks backward through a temp buffer, writes the NUL byte,
+# then repeatedly divides by 10 to emit ASCII digits.
+# `toint` scans a digit string from left to right, multiplies the
+# accumulator by 10, and adds the next digit value.
 FUNCTIONS = {
     'tostr':"""
     tostr:
@@ -148,14 +152,15 @@ def compile_line(line):
         left_operand, left_var = compile_operand(left_token)
         right_operand, right_var = compile_operand(right_token)
 
-        # Load left operand into rax
+        # mov rax, <left> loads the left operand into the accumulator.
         asm = f"    mov rax, {left_operand}\n"
-        # If both are variables, load right into rbx and compare two registers
+        # mov rbx, <right> loads the right operand when both sides are variables.
+        # cmp rax, rbx compares both values directly.
         if left_var is not None and right_var is not None:
             asm += f"    mov rbx, {right_operand}\n"
             asm += "    cmp rax, rbx\n"
         else:
-            # Otherwise, compare rax with immediate or variable directly
+            # cmp rax, <right> handles immediates or one-variable comparisons.
             asm += f"    cmp rax, {right_operand}\n"
 
         # Map operators to inverse jump instructions (we jump if condition is false)
@@ -172,7 +177,7 @@ def compile_line(line):
         if jump is None:
             raise ValueError(f"Unsupported operator in if-condition: {operator}")
 
-        # Append jump instruction to false_label if condition fails
+        # jne/jge/jg/jle/jl/jne jumps to the false label when the test fails.
         asm += f"    {jump} {false_label}\n"
         return asm
 
@@ -186,15 +191,20 @@ def compile_line(line):
         declaration = variables.get(token)
 
         if token.lstrip('-').isdigit():
+            # mov <reg>, <imm> loads a numeric literal directly.
             return f"    mov {target_reg}, {token}\n"
 
         if declaration and (declaration.startswith('rb ') or declaration.startswith('db ')):
             needed_functions.add('toint')
+            # mov rsi, <token> points the parser at the text buffer.
+            # call toint converts the string digits into an integer.
+            # mov <reg>, rax keeps the parsed value in the requested register.
             asm = f"    mov rsi, {token}\n    call toint\n"
             if target_reg != 'rax':
                 asm += f"    mov {target_reg}, rax\n"
             return asm
 
+        # mov <reg>, [token] loads a numeric variable from memory.
         return f"    mov {target_reg}, [{token}]\n"
 
     # Simple assignment: let X = 123  or let X = Y
@@ -219,15 +229,22 @@ def compile_line(line):
             return ""
         elif parts[3].isdigit():
             # immediate numeric assignment
+            # mov rax, imm loads the literal.
+            # mov [dst], rax stores it into the destination variable.
             return f"    mov rax, {parts[3]}\n    mov [{parts[1]}], rax\n"
         else:
             # assign from another variable
+            # mov rax, [src] reads the source variable.
+            # mov [dst], rax copies it into the destination variable.
             return f"    mov rax, [{parts[3]}]\n    mov [{parts[1]}], rax\n"
 
     # arithmetic operations: add, sub, mul, div
     elif cmd == 'add':
         if len(parts) < 4:
             raise ValueError(f"Malformed add statement: {line}")
+        # rbx gets the right operand first so later toint calls cannot overwrite rax.
+        # rax gets the left operand second.
+        # add rax, rbx writes the sum back into rax.
         return (
             compile_numeric_operand(parts[3], 'rbx')
             + compile_numeric_operand(parts[2], 'rax')
@@ -237,6 +254,9 @@ def compile_line(line):
     elif cmd == 'sub':
         if len(parts) < 4:
             raise ValueError(f"Malformed sub statement: {line}")
+        # rbx gets the right operand first.
+        # rax gets the left operand second.
+        # sub rax, rbx computes left minus right.
         return (
             compile_numeric_operand(parts[3], 'rbx')
             + compile_numeric_operand(parts[2], 'rax')
@@ -246,6 +266,9 @@ def compile_line(line):
     elif cmd == 'mul':
         if len(parts) < 4:
             raise ValueError(f"Malformed mul statement: {line}")
+        # rbx gets the right operand first.
+        # rax gets the left operand second.
+        # mul rbx multiplies rax by rbx and leaves the result in rax.
         return (
             compile_numeric_operand(parts[3], 'rbx')
             + compile_numeric_operand(parts[2], 'rax')
@@ -255,6 +278,9 @@ def compile_line(line):
     elif cmd == 'div':
         if len(parts) < 4:
             raise ValueError(f"Malformed div statement: {line}")
+        # rbx gets the divisor.
+        # rax gets the dividend.
+        # xor rdx, rdx clears the high half before div.
         return (
             compile_numeric_operand(parts[3], 'rbx')
             + compile_numeric_operand(parts[2], 'rax')
@@ -265,6 +291,7 @@ def compile_line(line):
     elif cmd == 'mov':
         if len(parts) < 3:
             raise ValueError(f"Malformed mov statement: {line}")
+        # mov [dst], [src] copies the value from one variable location to another.
         return f"    mov [{parts[1]}], [{parts[2]}]"    
 
     # print string literal or variable
@@ -280,7 +307,11 @@ def compile_line(line):
             variables[str_label] = f"db '{clean_text}', 0"
             str_to_print_count += 1
 
-            # Find the null terminator and pass the exact byte count to write.
+            # mov rax, 1 selects the write syscall.
+            # mov rdi, 1 targets stdout.
+            # mov rsi, <label> points to the string.
+            # repne scasb finds the NUL terminator.
+            # mov rdx, rcx supplies the byte count.
             return (f"    mov rax, 1\n"
                 f"    mov rdi, 1\n"
                 f"    mov rsi, {str_label}\n"
@@ -304,7 +335,7 @@ def compile_line(line):
             variables[str_label] = f"db '{clean_text}', 0"
             str_to_print_count += 1
 
-            # Reuse the same null-terminated length scan before the syscall.
+            # Same write sequence as the double-quoted case.
             return (f"    mov rax, 1\n"
                     f"    mov rdi, 1\n"
                     f"    mov rsi, {str_label}\n"
@@ -328,7 +359,8 @@ def compile_line(line):
             # so `print` can reuse the generated buffer without recomputing it.
             if source_name in string_buffers:
                 pointer_name = string_buffers[source_name]
-                # Read the pointer, measure the resulting string, and write it.
+                # mov rsi, [pointer] loads the saved string start.
+                # The rest of the sequence measures length and writes to stdout.
                 return (f"    mov rax, 1\n"
                         f"    mov rsi, [{pointer_name}]\n"
                         f"    mov rdi, rsi\n"
@@ -344,7 +376,7 @@ def compile_line(line):
             declaration = variables.get(source_name)
             # Raw input buffers are already strings, so they can be printed as-is.
             if declaration and declaration.startswith('rb '):
-                # Measure the buffer up to the zero terminator before writing it.
+                # Same write sequence, but the source is the raw input buffer.
                 return (f"    mov rax, 1\n"
                         f"    mov rsi, {source_name}\n"
                         f"    mov rdi, rsi\n"
@@ -360,7 +392,7 @@ def compile_line(line):
             declaration = variables.get(source_name)
             # Static text declared with `db` is also written directly by address.
             if declaration and declaration.startswith('db '):
-                # Same length-scan pattern as the other string-printing paths.
+                # Same write sequence, but the source is static string data.
                 return (f"    mov rax, 1\n"
                         f"    mov rdi, 1\n"
                         f"    mov rsi, {source_name}\n"
@@ -380,6 +412,10 @@ def compile_line(line):
     # print newline helper
     elif cmd == 'prtln':
         needed_constants.add('prtln')
+        # mov rax, 1 selects write.
+        # mov rdi, 1 targets stdout.
+        # mov rsi, newline points at the newline text.
+        # mov rdx, newline_len writes the single line break.
         return (f"    mov rax, 1\n"
                 f"    mov rdi, 1\n"
                 f"    mov rsi, newline\n"
@@ -400,6 +436,11 @@ def compile_line(line):
         else:
             buffer_size = '200'
 
+        # mov rax, 0 selects read.
+        # mov rdi, 0 targets stdin.
+        # mov rsi, buffer_name points to the destination buffer.
+        # mov rdx, size limits the read and keeps space for NUL.
+        # mov byte [buffer + rax], 0 terminates the input string.
         return (
             f"    mov rax, 0\n"
             f"    mov rdi, 0\n"
@@ -430,6 +471,11 @@ def compile_line(line):
             variables[pointer_name] = 'dq 0'
             string_buffers[source_var] = pointer_name
 
+                # mov rsi, source_var points to text input.
+                # call toint parses that text as an integer.
+                # mov rdi, buffer_name selects the output buffer.
+                # call tostr renders the integer as decimal text.
+                # mov [pointer_name], rdi stores the start pointer for printing.
             return (f"    mov rsi, {source_var}\n"
                     f"    call toint\n"
                     f"    mov rdi, {buffer_name}\n"
@@ -447,6 +493,10 @@ def compile_line(line):
         # remember which pointer belongs to this variable so `print` can reuse it
         string_buffers[source_var] = pointer_name
 
+        # mov rdi, buffer_name selects the destination buffer.
+        # mov rax, [source_var] loads the number to format.
+        # call tostr writes the decimal representation.
+        # mov [pointer_name], rdi preserves the actual start address.
         return (f"    mov rdi, {buffer_name}\n"
             f"    mov rax, [{source_var}]\n"
             f"    call tostr\n"
@@ -463,6 +513,14 @@ def compile_line(line):
         # the helper convert the digits into a numeric value.
         variables[buffer_name] = 'rb 20'
 
+        # mov rax, 0 selects read.
+        # mov rdi, 0 targets stdin.
+        # mov rsi, buffer_name stores typed digits.
+        # mov rdx, 20 caps the read length.
+        # mov byte [buffer + rax], 0 NUL-terminates the input.
+        # mov rsi, buffer_name points the parser at the text.
+        # call toint parses the digits.
+        # mov [target_var], rax stores the numeric result.
         return (
             f"    mov rax, 0\n"
             f"    mov rdi, 0\n"
@@ -565,6 +623,9 @@ for line in code_line:
     output += compile_line(line) + "\n"
 
 # generating an exit command using linux syscall
+# mov rax, 60 selects exit.
+# xor rdi, rdi sets the return code to zero.
+# syscall terminates the program.
 output += """
     mov rax, 60
     xor rdi, rdi
