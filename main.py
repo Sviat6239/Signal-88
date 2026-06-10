@@ -22,6 +22,9 @@ temp_buffer_count = 0
 str_to_print_count = 0
 if_label_count = 0
 if_stack = []
+# remember which variable currently has a string buffer produced by `tostr`
+# value: name of a pointer variable that stores the actual string start address
+string_buffers = {}
 
 # Pre-defined assembly helpers. When a source line requests a helper
 # (for example the `tostr` or `toint` runtime), we add its name to
@@ -114,6 +117,7 @@ def compile_line(line):
     global str_to_print_count
     global if_label_count
     global if_stack
+    global string_buffers
 
     parts = line.split()
     cmd = parts[0]
@@ -222,7 +226,24 @@ def compile_line(line):
                     f"    syscall\n")
 
         else:
-            # printing a variable or unsupported operand
+            # printing a variable: if it was passed through `tostr`, use the
+            # stored string pointer; otherwise we do not have a direct
+            # integer-to-text printer yet.
+            source_name = parts[1]
+            if source_name in string_buffers:
+                pointer_name = string_buffers[source_name]
+                return (f"    mov rax, 1\n"
+                        f"    mov rsi, [{pointer_name}]\n"
+                        f"    mov rdi, rsi\n"
+                        f"    mov rcx, -1\n"
+                        f"    xor al, al\n"
+                        f"    repne scasb\n"
+                        f"    not rcx\n"
+                        f"    dec rcx\n"
+                        f"    mov rdx, rcx\n"
+                        f"    mov rdi, 1\n"
+                        f"    syscall\n")
+
             return ""
 
     # print newline helper
@@ -239,11 +260,18 @@ def compile_line(line):
         needed_functions.add('tostr')
         source_var = parts[1]
         buffer_name = f"_temp_str_{temp_buffer_count}"
+        pointer_name = f"_temp_str_ptr_{temp_buffer_count}"
         temp_buffer_count += 1
 
         variables[buffer_name] = 'rb 20'  # reserve 20 bytes for the string
+        variables[pointer_name] = 'dq 0'   # store the actual start pointer returned by tostr
+        # remember which pointer belongs to this variable so `print` can reuse it
+        string_buffers[source_var] = pointer_name
 
-        return f"    mov rdi, {buffer_name}\n    mov rax, [{source_var}]\n    call tostr"
+        return (f"    mov rdi, {buffer_name}\n"
+            f"    mov rax, [{source_var}]\n"
+            f"    call tostr\n"
+            f"    mov [{pointer_name}], rdi")
 
     # parse string to integer using helper
     elif cmd == 'toint':
