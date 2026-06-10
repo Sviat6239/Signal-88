@@ -85,7 +85,7 @@ CONSTANTS = {
 }
 
 # source file to compile. Change to any path as needed.
-file = 'code5.bas'  # put here the path to your source file
+file = 'code6.bas'  # put here the path to your source file
 
 # start a timer to show compilation duration
 start_time = time.perf_counter()
@@ -613,7 +613,14 @@ def compile_line(line):
         asm += f"{current['end_label']}:\n"
         return asm
 
+    if cmd == 'label':
+        return f".{parts[1]}:"
+
+    if cmd == 'jmp':
+        return f"   jmp .{parts[1]}"
+
     return ""
+
 
 # compilation of all our saved lines in code_line variable
     # Each source line expands to one or more assembly instructions that are
