@@ -33,14 +33,18 @@ FUNCTIONS = {
     'tostr':"""
     tostr:
         mov rcx, 10
-        mov rdx, rdi
-        add rdi, 19
+        lea rdi, [rdi + 19]
         mov byte [rdi], 0
-    .loop:
+        cmp rax, 0
+        jne .loop
         dec rdi
+        mov byte [rdi], '0'
+        ret
+    .loop:
         xor rdx, rdx
         div rcx
         add dl, '0'
+        dec rdi
         mov [rdi], dl
         test rax, rax
         jnz .loop
@@ -94,7 +98,10 @@ for line in f:
         parts = line.split()  # tokenize the line by whitespace
         # `let <name> = <value>` creates a storage slot for the variable
         if parts[0] == "let":
-            variables[parts[1]] = 'dq 0'
+            if len(parts) == 3 and parts[2].isdigit():
+                variables[parts[1]] = f"rb {parts[2]}"
+            else:
+                variables[parts[1]] = 'dq 0'
 
 output = "format elf64 executable 3\nentry _start\n\n"  # ELF header and entry point
 output += "segment readable executable\n_start:\n"  # text/code segment and _start label
@@ -176,15 +183,19 @@ def compile_line(line):
             # pre-scan phase and does not need emitted code here.
             return ""
 
+        if len(parts) == 3 and parts[2].isdigit():
+            # Buffer declaration such as `let buff 200` is also handled by
+            # the pre-scan phase and does not need emitted code here.
+            return ""
+
         if len(parts) < 4:
             raise ValueError(f"Malformed let statement: {line}")
 
         if parts[3].startswith('"'):
             raw_str = " ".join(parts[3:])
             clean_text = raw_str.strip('"')
-            str_label = f"_str_const_{str_to_print_count}"
-
-            variables[str_label] = f"db '{clean_text}', 0"
+            variables[parts[1]] = f"db '{clean_text}', 0"
+            return ""
         elif parts[3].isdigit():
             # immediate numeric assignment
             return f"    mov rax, {parts[3]}\n    mov [{parts[1]}], rax\n"
@@ -266,6 +277,29 @@ def compile_line(line):
                         f"    mov rdi, 1\n"
                         f"    syscall\n")
 
+            declaration = variables.get(source_name)
+            if declaration and declaration.startswith('rb '):
+                return (f"    mov rax, 1\n"
+                        f"    mov rsi, {source_name}\n"
+                        f"    mov rdi, rsi\n"
+                        f"    mov rcx, -1\n"
+                        f"    xor al, al\n"
+                        f"    repne scasb\n"
+                        f"    not rcx\n"
+                        f"    dec rcx\n"
+                        f"    mov rdx, rcx\n"
+                        f"    mov rdi, 1\n"
+                        f"    syscall\n")
+
+            declaration = variables.get(source_name)
+            if declaration and declaration.startswith('db '):
+                clean_text = declaration[4:].rsplit(',', 1)[0].strip().strip("'")
+                return (f"    mov rax, 1\n"
+                        f"    mov rdi, 1\n"
+                        f"    mov rsi, {source_name}\n"
+                        f"    mov rdx, {len(clean_text)}\n"
+                        f"    syscall\n")
+
             return ""
 
     # print newline helper
@@ -277,10 +311,52 @@ def compile_line(line):
                 f"    mov rdx, newline_len\n"
                 f"    syscall\n")
 
+    elif cmd == 'read':
+        if len(parts) < 2:
+            raise ValueError(f"Malformed read statement: {line}")
+
+        buffer_name = parts[1]
+        buffer_decl = variables.get(buffer_name)
+
+        if buffer_decl and buffer_decl.startswith('rb '):
+            buffer_size = buffer_decl.split()[1]
+        else:
+            buffer_size = '200'
+
+        return (
+            f"    mov rax, 0\n"
+            f"    mov rdi, 0\n"
+            f"    mov rsi, {buffer_name}\n"
+            f"    mov rdx, {buffer_size}\n"
+            f"    dec rdx\n"
+            f"    syscall\n"
+            f"    mov byte [{buffer_name} + rax], 0\n"
+        )
+
     # convert integer to string: call helper that needs a temp buffer
     elif cmd == 'tostr':
         needed_functions.add('tostr')
         source_var = parts[1]
+
+        declaration = variables.get(source_var)
+        if declaration and declaration.startswith('rb '):
+            # For input buffers, first parse the text as an integer and then
+            # convert that integer back to a string in a dedicated temp buffer.
+            needed_functions.add('toint')
+            buffer_name = f"_temp_str_{temp_buffer_count}"
+            pointer_name = f"_temp_str_ptr_{temp_buffer_count}"
+            temp_buffer_count += 1
+
+            variables[buffer_name] = 'rb 20'
+            variables[pointer_name] = 'dq 0'
+            string_buffers[source_var] = pointer_name
+
+            return (f"    mov rsi, {source_var}\n"
+                    f"    call toint\n"
+                    f"    mov rdi, {buffer_name}\n"
+                    f"    call tostr\n"
+                    f"    mov [{pointer_name}], rdi\n")
+
         buffer_name = f"_temp_str_{temp_buffer_count}"
         pointer_name = f"_temp_str_ptr_{temp_buffer_count}"
         temp_buffer_count += 1
@@ -409,8 +485,8 @@ for var, declaration in variables.items():
     # emit data declarations collected while compiling lines
     if declaration.startswith('db'):
         output += f"    {var} {declaration}\n"
-    elif declaration == 'rb 20':
-        output += f"    {var} rb 20\n"
+    elif declaration.startswith('rb '):
+        output += f"    {var} {declaration}\n"
     else:
         output += f"    {var} dq 0\n"
 
