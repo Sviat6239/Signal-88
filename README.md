@@ -1,36 +1,42 @@
 # dummyBASIC
 
 `dummyBASIC` is a tiny educational DBASIC -> FASM compiler written in Python.
-It reads a simple BASIC-like source file, converts it into FASM-compatible x86_64 assembly, and writes the result to `output.asm`.
+It reads a small BASIC-like source file, converts it into FASM-compatible x86_64 assembly, and writes the result to `output.asm`.
 
 ## Files
 
 - `main.py` - the compiler script.
 - `code.bas` - the default source file compiled by `main.py`.
 - `code1.bas` - an additional sample source file you can use or rename.
+- `code3.bas` and `code4.bas` - extra sample programs used for testing edge cases.
 - `output.asm` - generated assembly output.
 
-## Features
+## What It Supports
 
 - Variable assignment with `let`.
 - Arithmetic operations with `add`, `sub`, `mul`, and `div`.
 - Output with `print` and `prtln`.
+- Input with `read`.
 - Runtime helpers for converting numbers to strings and strings to numbers with `tostr` and `toint`.
 - Conditional flow with `if`, `elseif`, `else`, and `end if`.
 - Generates a readable text section and a writable data section automatically.
 
-## Example Language
+## Language Reference
 
-The current compiler supports a very small instruction set:
+The compiler accepts a small instruction set:
 
 ```text
 let name = 10
+let text = "hello"
+let buff 200
 add result left right
 sub result left right
 mul result left right
 div result left right
 print "hello"
+print name
 prtln
+read buff
 tostr value
 toint target
 if a == 10 then
@@ -38,6 +44,15 @@ elseif a == 5 then
 else
 end if
 ```
+
+### Statement Notes
+
+- `let name = 10` reserves a 64-bit variable.
+- `let buff 200` reserves a byte buffer for input.
+- `print` can print string literals, string variables, and buffers that already contain text.
+- `tostr` converts a numeric value into a printable string stored in a temporary buffer.
+- `toint` reads text from stdin, parses it as an integer, and stores the result.
+- `if` supports `==`, `!=`, `<`, `<=`, `>`, and `>=`.
 
 ## Prerequisites
 
@@ -65,11 +80,11 @@ chmod +x output
 
 ## Notes
 
-- The compiler is intentionally minimal and does not yet validate malformed input very deeply.
+- The compiler is intentionally minimal and does not validate malformed input very deeply.
 - String literal handling is naive and does not support escaped quotes.
-- Variables declared with `let` are stored as 64-bit values (`dq 0`).
-- `print` currently handles string literals directly. If you want to print a number as text, convert it first with `tostr` and then print the variable.
+- Variables declared with `let` are stored as 64-bit values unless they are declared as buffers.
 - The generated assembly uses Linux syscalls, so the output is intended for ELF64/Linux-style execution.
+- `main.py` always reads `code.bas` by default; change the `file` variable near the top of the script if you want a different input file.
 
 ## Example `code.bas`
 
@@ -77,9 +92,11 @@ chmod +x output
 let a = 10
 let b = 20
 add c a b
+print c
 
 tostr a
 print a
+read buff
 prtln
 
 if a == 10 then
