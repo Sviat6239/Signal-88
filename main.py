@@ -304,6 +304,8 @@ def compile_line(line):
             + f"    mov [{parts[1]}], rax\n"
         )
 
+    # Mathematical commands below are planned features; they are left as
+    # explicit stubs so unsupported source lines fail quietly for now.
     elif cmd == 'sqr':
         pass
 
@@ -349,6 +351,7 @@ def compile_line(line):
     elif cmd == 'tetr':
         pass
 
+    # Direct memory-to-memory copy for simple assignments.
     elif cmd == 'mov':
         if len(parts) < 3:
             raise ValueError(f"Malformed mov statement: {line}")
@@ -468,6 +471,7 @@ def compile_line(line):
                         f"    syscall\n")
 
             # Unknown value types are ignored for now rather than crashing.
+            # Unknown print source types are ignored until a dedicated formatter exists.
             return ""
 
     # print newline helper
@@ -595,6 +599,8 @@ def compile_line(line):
             f"    mov [{target_var}], rax"
         )
 
+    # Base-conversion helpers are not implemented yet; keep them as stubs
+    # so the compiler can be extended without changing the parser shape.
     elif cmd == 'tobin':
         pass
 
@@ -698,6 +704,7 @@ def compile_line(line):
         asm += f"{current['end_label']}:\n"
         return asm
 
+    # Local labels and jumps are translated directly into FASM labels.
     if cmd == 'label':
         return f".{parts[1]}:"
 
@@ -708,13 +715,13 @@ def compile_line(line):
 
 
 # compilation of all our saved lines in code_line variable
-    # Each source line expands to one or more assembly instructions that are
-    # appended to the executable text section in order.
+# Each source line expands to one or more assembly instructions that are
+# appended to the executable text section in order.
 for line in code_line:
     # compile each collected source line into assembly and append
     output += compile_line(line) + "\n"
 
-# generating an exit command using linux syscall
+# Append a clean process exit so the generated binary terminates normally.
 # mov rax, 60 selects exit.
 # xor rdi, rdi sets the return code to zero.
 # syscall terminates the program.
@@ -724,11 +731,13 @@ output += """
     syscall
 """
 
-# generating all mentioned in sourse code function bellow the exit block
+# Emit helper routines only when the source actually requested them.
 for func_name in needed_functions:
     # emit helper function code if requested by the source
     output += FUNCTIONS[func_name] + "\n"
 
+# Data declarations follow the code section so FASM can place runtime data
+# after the executable instructions.
 output += "\nsegment readable writable\n"
 for var, declaration in variables.items():
     # emit data declarations collected while compiling lines
@@ -749,7 +758,7 @@ print("#Our compiled code:") # --\
 print(output)                # --- prints the compiled code
 print(" ")                   # --/
 
-# writing output fasm code into a file
+# Write the generated assembly to disk for the next build step.
 with open('output.asm', 'w') as f:
     f.write(output)
     f.close
