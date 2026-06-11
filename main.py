@@ -288,6 +288,39 @@ def compile_line(line):
             + f"    mov [{parts[1]}], rax\n"
         )
 
+    elif cmd == 'sqr':
+        pass
+
+    elif cmd == 'root':
+        pass
+
+    elif cmd == 'pow':
+        pass
+
+    elif cmd == 'log':
+        pass
+
+    elif cmd == 'log10':
+        pass
+
+    elif cmd == 'sin':
+        pass
+
+    elif cmd == 'cos':
+        pass
+
+    elif cmd == 'tg':
+        pass
+
+    elif cmd == 'ctg':
+        pass
+
+    elif cmd == 'fact':
+        pass
+
+    elif cmd == 'tetr':
+        pass
+
     elif cmd == 'mov':
         if len(parts) < 3:
             raise ValueError(f"Malformed mov statement: {line}")
