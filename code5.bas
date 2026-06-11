@@ -28,3 +28,28 @@ div buf num1 num2
 tostr buf
 print buf 
 toint buf 
+
+sqr buf num1
+tostr buf
+print buf
+toint buf
+
+sqr buf num2
+tostr buf 
+print buf
+toint buf
+
+root buf num1
+tostr buf
+print buf
+toint buf
+
+root buf num2 
+tostr buf
+print buf
+toint buf
+
+pow buf num1 num2
+tostr buf
+print buf 
+toint buf
