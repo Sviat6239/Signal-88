@@ -73,6 +73,14 @@ FUNCTIONS = {
         jmp .loop
     .done:
         ret
+    """, 
+        'tobin':"""
+    """,
+        'todec':"""
+    """,
+        'tohex':"""
+    """,
+        'tooct':"""
     """
 }
 
