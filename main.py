@@ -579,6 +579,18 @@ def compile_line(line):
             f"    mov [{target_var}], rax"
         )
 
+    elif cmd == 'tobin':
+        pass
+
+    elif cmd == 'todec':
+        pass
+
+    elif cmd == 'tohex':
+        pass
+
+    elif cmd == 'tooct':
+        pass
+
     elif cmd == "if":
         # Parse: if <left> <operator> <right> then
         # Note: 'then' is optional and ignored during tokenization
