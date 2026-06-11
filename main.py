@@ -76,11 +76,19 @@ FUNCTIONS = {
     """, 
         'tobin':"""
     """,
+        'tostrbin':"""
+    """,
         'todec':"""
+    """,
+        'tostrdec':"""
     """,
         'tohex':"""
     """,
+        'tostrhex':"""
+    """,
         'tooct':"""
+    """,
+        'tostroct':"""
     """
 }
 
@@ -590,13 +598,25 @@ def compile_line(line):
     elif cmd == 'tobin':
         pass
 
+    elif cmd == 'tostrbin':
+        pass
+
     elif cmd == 'todec':
+        pass
+
+    elif cmd == 'tostrdec':
         pass
 
     elif cmd == 'tohex':
         pass
 
+    elif cmd == 'tostrhex':
+        pass
+
     elif cmd == 'tooct':
+        pass
+
+    elif cmd == 'tostroct':
         pass
 
     elif cmd == "if":
