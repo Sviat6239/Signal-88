@@ -315,6 +315,18 @@ def compile_line(line):
     elif cmd == 'ctg':
         pass
 
+    elif cmd == 'arc-sin':
+        pass
+
+    elif cmd == 'arc-cos':
+        pass
+
+    elif cmd == 'arc-tg':
+        pass
+
+    elif cmd == 'arc-ctg':
+        pass
+
     elif cmd == 'fact':
         pass
 
