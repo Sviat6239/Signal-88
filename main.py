@@ -307,7 +307,15 @@ def compile_line(line):
     # Mathematical commands below are planned features; they are left as
     # explicit stubs so unsupported source lines fail quietly for now.
     elif cmd == 'sqr':
-        pass
+        if len(parts) < 3:
+            raise ValueError(f"Malformee sqr statement: {line}")
+        
+        return(
+            compile_numeric_operand(parts[2], 'rax')
+            + "    mul rax\n "
+            + f"    mov [{parts[1]}], rax"
+        )
+
 
     elif cmd == 'root':
         pass
@@ -602,7 +610,16 @@ def compile_line(line):
     # Base-conversion helpers are not implemented yet; keep them as stubs
     # so the compiler can be extended without changing the parser shape.
     elif cmd == 'tobin':
-        pass
+        needed_functions.add('tobin')
+        target_var = parts[1]
+        buffer_name = f"_temp_str_{temp_buffer_count}"
+        temp_buffer_count += 1
+
+        variables[buffer_name] = 'rb 20'
+
+        return (
+            f"   "
+        )
 
     elif cmd == 'tostrbin':
         pass
