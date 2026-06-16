@@ -34,10 +34,10 @@ string_buffers = {}
 # `toint` scans a digit string from left to right, multiplies the
 # accumulator by 10, and adds the next digit value.
 FUNCTIONS = {
-    'tostr':"""
-    tostr:
+    'tostr': """
+    tostr: ; Конвертация числа RAX в строку (десятичная)
         mov rcx, 10
-        lea rdi, [rdi + 19]
+        lea rdi, [rdi + 20] ; Уходим в конец буфера
         mov byte [rdi], 0
         cmp rax, 0
         jne .loop
@@ -54,14 +54,12 @@ FUNCTIONS = {
         jnz .loop
         ret
     """,
-        'toint':"""
-    toint:
+    'toint': """
+    toint: ; Строка RSI в число RAX
         xor rax, rax
         mov rcx, 10
     .loop:
         movzx rdx, byte [rsi]
-        cmp rdx, 0
-        je .done
         cmp rdx, '0'
         jl .done
         cmp rdx, '9'
@@ -73,22 +71,83 @@ FUNCTIONS = {
         jmp .loop
     .done:
         ret
-    """, 
-        'tobin':"""
     """,
-        'tostrbin':"""
+    'tobin': """ ; Аналог toint, но для bin (основание 2)
+    tobin:
+        xor rax, rax
+    .loop:
+        movzx rdx, byte [rsi]
+        cmp rdx, '0'
+        je .is_zero
+        cmp rdx, '1'
+        jne .done
+        shl rax, 1
+        inc rax
+        jmp .next
+    .is_zero:
+        shl rax, 1
+    .next:
+        inc rsi
+        jmp .loop
+    .done:
+        ret
     """,
-        'todec':"""
+    'tostrbin': """
+    tostrbin: ; Число RAX в бинарную строку (rdi)
+        mov rcx, 64 ; Макс бит
+    .skip:
+        bt rax, rcx
+        jc .start
+        loop .skip
+    .start:
+        bt rax, rcx
+        setc dl
+        add dl, '0'
+        mov [rdi], dl
+        inc rdi
+        loop .start
+        mov byte [rdi], 0
+        ret
     """,
-        'tostrdec':"""
+    'tohex': """
+    tohex: ; Строка (hex) RSI в число RAX
+        xor rax, rax
+    .loop:
+        movzx rdx, byte [rsi]
+        cmp rdx, '0'; Простые проверки для 0-9, A-F
+        jl .done
+        ; ... (здесь нужна логика нормализации 'a'/'A' в 10-15)
+        ; Для краткости:
+        cmp rdx, '9'
+        jle .digit
+        or rdx, 32 ; в нижний регистр
+        sub rdx, 39 ; 'a' -> 10
+    .digit:
+        sub rdx, '0'
+        shl rax, 4
+        add rax, rdx
+        inc rsi
+        jmp .loop
+    .done:
+        ret
     """,
-        'tohex':"""
-    """,
-        'tostrhex':"""
-    """,
-        'tooct':"""
-    """,
-        'tostroct':"""
+    'tostrhex': """
+    tostrhex: ; Число RAX в HEX строку (rdi)
+        mov rcx, 16 ; 16 нибблов в 64-бит
+    .loop:
+        rol rax, 4
+        mov dl, al
+        and dl, 0x0F
+        cmp dl, 9
+        jbe .digit
+        add dl, 7
+    .digit:
+        add dl, '0'
+        mov [rdi], dl
+        inc rdi
+        loop .loop
+        mov byte [rdi], 0
+        ret
     """
 }
 
@@ -935,6 +994,9 @@ def compile_line(line):
 
     if cmd == 'jl':
         return f"   jl .{parts[1]}"
+
+    if cmd == 'cmp':
+        return f"   cmp {parts[1]}, {parts[2]}"
 
     return ""
 
