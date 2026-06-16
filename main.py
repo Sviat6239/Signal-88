@@ -406,13 +406,28 @@ def compile_line(line):
         )
 
     elif cmd == 'arc-ctg':
-        pass
+        if len(parts) < 3:
+            raise ValueError(f"Malfored arc-ctg statement: {line}")
+
+        return(
+            compile_numeric_operand()
+        )
 
     elif cmd == 'fact':
-        pass
+        if len(parts) < 3:
+            raise ValueError(f"Malfored fact statement: {line}")
+
+        return(
+            compile_numeric_operand()
+        )
 
     elif cmd == 'tetr':
-        pass
+        if len(parts) < 3:
+            raise ValueError(f"Malfored tetr statement: {line}")
+
+        return(
+            compile_numeric_operand()
+        )
 
     # Direct memory-to-memory copy for simple assignments.
     elif cmd == 'mov':
