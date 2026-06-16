@@ -554,6 +554,8 @@ def compile_line(line):
         # mov [dst], [src] copies the value from one variable location to another.
         return f"    mov [{parts[1]}], [{parts[2]}]"    
 
+    
+
     # print string literal or variable
     elif cmd == 'print':
         # string with double quotes
@@ -915,6 +917,24 @@ def compile_line(line):
 
     if cmd == 'jmp':
         return f"   jmp .{parts[1]}"
+    
+    if cmd == 'jne':
+        return f"   jne .{parts[1]}"
+
+    if cmd == 'je':
+        return f"   je .{parts[1]}"
+
+    if cmd == 'jge':
+        return f"   jge .{parts[1]}"
+
+    if cmd == 'jg':
+        return f"   jg .{parts[1]}"
+
+    if cmd == 'jle':
+        return f"   jle .{parts[1]}"
+
+    if cmd == 'jl':
+        return f"   jl .{parts[1]}"
 
     return ""
 
