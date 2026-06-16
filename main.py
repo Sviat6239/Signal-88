@@ -35,9 +35,9 @@ string_buffers = {}
 # accumulator by 10, and adds the next digit value.
 FUNCTIONS = {
     'tostr': """
-    tostr: ; Конвертация числа RAX в строку (десятичная)
+    tostr:
         mov rcx, 10
-        lea rdi, [rdi + 20] ; Уходим в конец буфера
+        lea rdi, [rdi + 20]
         mov byte [rdi], 0
         cmp rax, 0
         jne .loop
@@ -55,7 +55,7 @@ FUNCTIONS = {
         ret
     """,
     'toint': """
-    toint: ; Строка RSI в число RAX
+    toint:
         xor rax, rax
         mov rcx, 10
     .loop:
@@ -72,7 +72,7 @@ FUNCTIONS = {
     .done:
         ret
     """,
-    'tobin': """ ; Аналог toint, но для bin (основание 2)
+    'tobin': """
     tobin:
         xor rax, rax
     .loop:
@@ -93,8 +93,8 @@ FUNCTIONS = {
         ret
     """,
     'tostrbin': """
-    tostrbin: ; Число RAX в бинарную строку (rdi)
-        mov rcx, 64 ; Макс бит
+    tostrbin:
+        mov rcx, 64
     .skip:
         bt rax, rcx
         jc .start
@@ -110,17 +110,15 @@ FUNCTIONS = {
         ret
     """,
     'tohex': """
-    tohex: ; Строка (hex) RSI в число RAX
+    tohex:
         xor rax, rax
     .loop:
         movzx rdx, byte [rsi]
-        cmp rdx, '0'; Простые проверки для 0-9, A-F
+        cmp rdx, '0'
         jl .done
-        ; ... (здесь нужна логика нормализации 'a'/'A' в 10-15)
-        ; Для краткости:
         cmp rdx, '9'
         jle .digit
-        or rdx, 32 ; в нижний регистр
+        or rdx, 32
         sub rdx, 39 ; 'a' -> 10
     .digit:
         sub rdx, '0'
@@ -132,8 +130,8 @@ FUNCTIONS = {
         ret
     """,
     'tostrhex': """
-    tostrhex: ; Число RAX в HEX строку (rdi)
-        mov rcx, 16 ; 16 нибблов в 64-бит
+    tostrhex:
+        mov rcx, 16
     .loop:
         rol rax, 4
         mov dl, al
