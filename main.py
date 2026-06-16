@@ -320,18 +320,54 @@ def compile_line(line):
     elif cmd == 'root':
         if len(parts) < 3:
             raise ValueError(f"Malfored root statement: {line}")
+        # compute integer square root using SSE (convert to double, sqrt, convert back)
+        dst = parts[1]
+        src = parts[2]
+        tmp_double = f"_tmp_fp_{temp_buffer_count}"
+        temp_buffer_count += 1
+        variables[tmp_double] = 'dq 0'
 
-        return(
-            compile_numeric_operand(parts[2], 'rax')
-        )
+        asm = ""
+        # load numeric operand into rax (handles immediates and variables)
+        asm += compile_numeric_operand(src, 'rax')
+        # store integer value into a temporary memory slot so fild can load it
+        tmp_int = f"_tmp_int_{temp_buffer_count}"
+        temp_buffer_count += 1
+        variables[tmp_int] = 'dq 0'
+        asm += f"    mov [{tmp_int}], rax\n"
+        # fild qword [tmp_int] ; fsqrt ; fstp qword [tmp_double]
+        asm += f"    fild qword [{tmp_int}]\n"
+        asm += f"    fsqrt\n"
+        asm += f"    fstp qword [{tmp_double}]\n"
+        # move double result into xmm0 and convert to integer in rax
+        asm += f"    movsd xmm0, [{tmp_double}]\n"
+        asm += f"    cvttsd2si rax, xmm0\n"
+        asm += f"    mov [{dst}], rax\n"
+        return asm
 
     elif cmd == 'pow':
         if len(parts) < 4:
             raise ValueError(f"Malfored pow statement: {line}")
+        # integer exponentiation: dst = base ^ exp (simple loop)
+        dst = parts[1]
+        base = parts[2]
+        exp = parts[3]
 
-        return(
-            compile_numeric_operand()
-        )
+        asm = ""
+        # load base into rdx and exponent into rbx
+        asm += compile_numeric_operand(base, 'rdx')
+        asm += compile_numeric_operand(exp, 'rbx')
+        # result in rax = 1
+        asm += f"    mov rax, 1\n"
+        asm += f"    cmp rbx, 0\n"
+        asm += f"    je _pow_done_{if_label_count}\n"
+        asm += f"_pow_loop_{if_label_count}:\n"
+        asm += f"    imul rax, rdx\n"
+        asm += f"    dec rbx\n"
+        asm += f"    jg _pow_loop_{if_label_count}\n"
+        asm += f"_pow_done_{if_label_count}:\n"
+        asm += f"    mov [{dst}], rax\n"
+        return asm
 
     elif cmd == 'log':
         if len(parts) < 3:
@@ -352,34 +388,116 @@ def compile_line(line):
     elif cmd == 'sin':
         if len(parts) < 3:
             raise ValueError(f"Malfored sin statement: {line}")
+        dst = parts[1]
+        src = parts[2]
+        # create temporaries for integer->float conversion and result storage
+        tmp_int = f"_tmp_int_{temp_buffer_count}"
+        temp_buffer_count += 1
+        variables[tmp_int] = 'dq 0'
+        tmp_fp = f"_tmp_fp_{temp_buffer_count}"
+        temp_buffer_count += 1
+        variables[tmp_fp] = 'dq 0'
 
-        return(
-            compile_numeric_operand()
-        )
+        asm = ""
+        # load numeric operand into rax and store to tmp_int
+        asm += compile_numeric_operand(src, 'rax')
+        asm += f"    mov [{tmp_int}], rax\n"
+        # use x87: fild qword [tmp_int] ; fsin ; fstp qword [tmp_fp]
+        asm += f"    fild qword [{tmp_int}]\n"
+        asm += f"    fsin\n"
+        asm += f"    fstp qword [{tmp_fp}]\n"
+        # move double result into xmm0 and convert to integer
+        asm += f"    movsd xmm0, [{tmp_fp}]\n"
+        asm += f"    cvttsd2si rax, xmm0\n"
+        asm += f"    mov [{dst}], rax\n"
+        return asm
 
     elif cmd == 'cos':
         if len(parts) < 3:
             raise ValueError(f"Malfored cos statement: {line}")
+        dst = parts[1]
+        src = parts[2]
+        tmp_int = f"_tmp_int_{temp_buffer_count}"
+        temp_buffer_count += 1
+        variables[tmp_int] = 'dq 0'
+        tmp_fp = f"_tmp_fp_{temp_buffer_count}"
+        temp_buffer_count += 1
+        variables[tmp_fp] = 'dq 0'
 
-        return(
-            compile_numeric_operand()
-        )
+        asm = ""
+        asm += compile_numeric_operand(src, 'rax')
+        asm += f"    mov [{tmp_int}], rax\n"
+        asm += f"    fild qword [{tmp_int}]\n"
+        asm += f"    fcos\n"
+        asm += f"    fstp qword [{tmp_fp}]\n"
+        asm += f"    movsd xmm0, [{tmp_fp}]\n"
+        asm += f"    cvttsd2si rax, xmm0\n"
+        asm += f"    mov [{dst}], rax\n"
+        return asm
 
     elif cmd == 'tg':
         if len(parts) < 3:
             raise ValueError(f"Malfored tg statement: {line}")
+        # tangent: compute sin / cos in double and convert to integer
+        dst = parts[1]
+        src = parts[2]
+        tmp_int = f"_tmp_int_{temp_buffer_count}"
+        temp_buffer_count += 1
+        variables[tmp_int] = 'dq 0'
+        sin_fp = f"_tmp_fp_{temp_buffer_count}"
+        temp_buffer_count += 1
+        variables[sin_fp] = 'dq 0'
+        cos_fp = f"_tmp_fp_{temp_buffer_count}"
+        temp_buffer_count += 1
+        variables[cos_fp] = 'dq 0'
 
-        return(
-            compile_numeric_operand()
-        )
+        asm = ""
+        asm += compile_numeric_operand(src, 'rax')
+        asm += f"    mov [{tmp_int}], rax\n"
+        asm += f"    fild qword [{tmp_int}]\n"
+        asm += f"    fsin\n"
+        asm += f"    fstp qword [{sin_fp}]\n"
+        asm += f"    fild qword [{tmp_int}]\n"
+        asm += f"    fcos\n"
+        asm += f"    fstp qword [{cos_fp}]\n"
+        asm += f"    movsd xmm0, [{sin_fp}]\n"
+        asm += f"    movsd xmm1, [{cos_fp}]\n"
+        asm += f"    divsd xmm0, xmm1\n"
+        asm += f"    cvttsd2si rax, xmm0\n"
+        asm += f"    mov [{dst}], rax\n"
+        return asm
 
     elif cmd == 'ctg':
         if len(parts) < 3:
             raise ValueError(f"Malfored ctg statement: {line}")
+        # cotangent: compute cos / sin
+        dst = parts[1]
+        src = parts[2]
+        tmp_int = f"_tmp_int_{temp_buffer_count}"
+        temp_buffer_count += 1
+        variables[tmp_int] = 'dq 0'
+        sin_fp = f"_tmp_fp_{temp_buffer_count}"
+        temp_buffer_count += 1
+        variables[sin_fp] = 'dq 0'
+        cos_fp = f"_tmp_fp_{temp_buffer_count}"
+        temp_buffer_count += 1
+        variables[cos_fp] = 'dq 0'
 
-        return(
-            compile_numeric_operand()
-        )
+        asm = ""
+        asm += compile_numeric_operand(src, 'rax')
+        asm += f"    mov [{tmp_int}], rax\n"
+        asm += f"    fild qword [{tmp_int}]\n"
+        asm += f"    fsin\n"
+        asm += f"    fstp qword [{sin_fp}]\n"
+        asm += f"    fild qword [{tmp_int}]\n"
+        asm += f"    fcos\n"
+        asm += f"    fstp qword [{cos_fp}]\n"
+        asm += f"    movsd xmm0, [{cos_fp}]\n"
+        asm += f"    movsd xmm1, [{sin_fp}]\n"
+        asm += f"    divsd xmm0, xmm1\n"
+        asm += f"    cvttsd2si rax, xmm0\n"
+        asm += f"    mov [{dst}], rax\n"
+        return asm
 
     elif cmd == 'arc-sin':
         if len(parts) < 3:
