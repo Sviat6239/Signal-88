@@ -11,9 +11,11 @@ It reads a small BASIC-like source file, converts it into FASM-compatible x86_64
 - `code2.bas` - a simple variable copy example.
 - `code3.bas` - a number-to-text and text-to-number example.
 - `code4.bas` - an input-buffer example.
+- `code.bas` - a larger arithmetic and conditional example.
 - `code5.bas` - a larger arithmetic and conditional example.
 - `code7.bas` - a label and jump example.
 - `code8.bas` - a larger feature-tour example that uses all currently supported language features.
+- `code9.bas` and later numbered samples - experimental files that may use unimplemented math helpers.
 - `output.asm` - generated assembly output.
 
 ## Current State
@@ -79,7 +81,7 @@ jmp loop
 
 ## Quick Start
 
-1. Edit `code6.bas` in the project root, or change the `file` variable in `main.py` to point at a different source.
+1. Edit `code6.bas` in the project root, or change the `file` variable in `main.py` to point at a different source. If you want a clean end-to-end demo of the currently supported language features, start with `code8.bas`.
 2. Run the compiler:
 
 ```bash
