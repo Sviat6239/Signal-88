@@ -868,26 +868,71 @@ def compile_line(line):
             f"   "
         )
 
-    elif cmd == 'tostrbin':
-        pass
-
-    elif cmd == 'todec':
-        pass
-
-    elif cmd == 'tostrdec':
-        pass
+    elif cmd == 'tobin':
+        needed_functions.add('tobin')
+        target_var = parts[1]
+        buffer_name = f"_temp_str_{temp_buffer_count}"
+        temp_buffer_count += 1
+        variables[buffer_name] = 'rb 65'
+        return (f"    mov rax, 0\n    mov rdi, 0\n    mov rsi, {buffer_name}\n"
+                f"    mov rdx, 65\n    syscall\n    mov byte [{buffer_name} + rax - 1], 0\n"
+                f"    mov rsi, {buffer_name}\n    call tobin\n    mov [{target_var}], rax")
 
     elif cmd == 'tohex':
-        pass
-
-    elif cmd == 'tostrhex':
-        pass
+        needed_functions.add('tohex')
+        target_var = parts[1]
+        buffer_name = f"_temp_str_{temp_buffer_count}"
+        temp_buffer_count += 1
+        variables[buffer_name] = 'rb 20'
+        return (f"    mov rax, 0\n    mov rdi, 0\n    mov rsi, {buffer_name}\n"
+                f"    mov rdx, 20\n    syscall\n    mov byte [{buffer_name} + rax - 1], 0\n"
+                f"    mov rsi, {buffer_name}\n    call tohex\n    mov [{target_var}], rax")
 
     elif cmd == 'tooct':
-        pass
+        needed_functions.add('tooct')
+        target_var = parts[1]
+        buffer_name = f"_temp_str_{temp_buffer_count}"
+        temp_buffer_count += 1
+        variables[buffer_name] = 'rb 25'
+        return (f"    mov rax, 0\n    mov rdi, 0\n    mov rsi, {buffer_name}\n"
+                f"    mov rdx, 25\n    syscall\n    mov byte [{buffer_name} + rax - 1], 0\n"
+                f"    mov rsi, {buffer_name}\n    call tooct\n    mov [{target_var}], rax")
+
+    elif cmd == 'tostrbin':
+        needed_functions.add('tostrbin')
+        source_var = parts[1]
+        buffer_name = f"_temp_str_{temp_buffer_count}"
+        pointer_name = f"_temp_str_ptr_{temp_buffer_count}"
+        temp_buffer_count += 1
+        variables[buffer_name] = 'rb 65'
+        variables[pointer_name] = 'dq 0'
+        string_buffers[source_var] = pointer_name
+        return (f"    mov rdi, {buffer_name}\n    mov rax, [{source_var}]\n"
+                f"    call tostrbin\n    mov [{pointer_name}], rdi")
+
+    elif cmd == 'tostrhex':
+        needed_functions.add('tostrhex')
+        source_var = parts[1]
+        buffer_name = f"_temp_str_{temp_buffer_count}"
+        pointer_name = f"_temp_str_ptr_{temp_buffer_count}"
+        temp_buffer_count += 1
+        variables[buffer_name] = 'rb 20'
+        variables[pointer_name] = 'dq 0'
+        string_buffers[source_var] = pointer_name
+        return (f"    mov rdi, {buffer_name}\n    mov rax, [{source_var}]\n"
+                f"    call tostrhex\n    mov [{pointer_name}], rdi")
 
     elif cmd == 'tostroct':
-        pass
+        needed_functions.add('tostroct')
+        source_var = parts[1]
+        buffer_name = f"_temp_str_{temp_buffer_count}"
+        pointer_name = f"_temp_str_ptr_{temp_buffer_count}"
+        temp_buffer_count += 1
+        variables[buffer_name] = 'rb 25'
+        variables[pointer_name] = 'dq 0'
+        string_buffers[source_var] = pointer_name
+        return (f"    mov rdi, {buffer_name}\n    mov rax, [{source_var}]\n"
+                f"    call tostroct\n    mov [{pointer_name}], rdi")
 
     elif cmd == "if":
         # Parse: if <left> <operator> <right> then
