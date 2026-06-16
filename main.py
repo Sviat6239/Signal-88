@@ -318,37 +318,92 @@ def compile_line(line):
 
 
     elif cmd == 'root':
-        pass
+        if len(parts) < 3:
+            raise ValueError(f"Malfored root statement: {line}")
+
+        return(
+            compile_numeric_operand(parts[2], 'rax')
+        )
 
     elif cmd == 'pow':
-        pass
+        if len(parts) < 4:
+            raise ValueError(f"Malfored pow statement: {line}")
+
+        return(
+            compile_numeric_operand()
+        )
 
     elif cmd == 'log':
-        pass
+        if len(parts) < 3:
+            raise ValueError(f"Malfored log statement: {line}")
+
+        return(
+            compile_numeric_operand()
+        )
 
     elif cmd == 'log10':
-        pass
+        if len(parts) < 3:
+            raise ValueError(f"Malfored log10 statemnt: {line}")
+
+        return(
+            compile_numeric_operand()
+        )
 
     elif cmd == 'sin':
-        pass
+        if len(parts) < 3:
+            raise ValueError(f"Malfored sin statement: {line}")
+
+        return(
+            compile_numeric_operand()
+        )
 
     elif cmd == 'cos':
-        pass
+        if len(parts) < 3:
+            raise ValueError(f"Malfored cos statement: {line}")
+
+        return(
+            compile_numeric_operand()
+        )
 
     elif cmd == 'tg':
-        pass
+        if len(parts) < 3:
+            raise ValueError(f"Malfored tg statement: {line}")
+
+        return(
+            compile_numeric_operand()
+        )
 
     elif cmd == 'ctg':
-        pass
+        if len(parts) < 3:
+            raise ValueError(f"Malfored ctg statement: {line}")
+
+        return(
+            compile_numeric_operand()
+        )
 
     elif cmd == 'arc-sin':
-        pass
+        if len(parts) < 3:
+            raise ValueError(f"Malfored arc-sin statement: {line}")
+
+        return(
+            compile_numeric_operand()
+        )
 
     elif cmd == 'arc-cos':
-        pass
+        if len(parts) < 3:
+            raise ValueError(f"Malfored arc-cos statement: {line}")
+
+        return(
+            compile_numeric_operand()
+        )
 
     elif cmd == 'arc-tg':
-        pass
+        if len(parts) < 3:
+            raise ValueError(f"Malfored arc-tg statement: {line}")
+
+        return(
+            compile_numeric_operand()
+        )
 
     elif cmd == 'arc-ctg':
         pass
