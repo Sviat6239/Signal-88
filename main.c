@@ -29,16 +29,16 @@ int main(){
 
                 count++;
             }
-
-            printf("Our code lines:\n");
-            for (size_t i = 0; i < count; i++){
-                printf("%zu: %s\n", i, lines[i]);
-                free(lines[i]);
-            }
-            free(lines);
     }
 
     fclose(fptr);
+
+    printf("Our code lines:\n");
+    for (size_t i = 0; i < count; i++){
+        printf("%zu: %s\n", i+1, lines[i]);
+        free(lines[i]);
+    }
+    free(lines);
 
     return 0;
 }
