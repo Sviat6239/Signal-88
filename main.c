@@ -8,8 +8,12 @@ int main(){
 
     char String[100];
 
-    while(fgets(String, 100, fptr)){
-        printf("%s", String);
+    if(fptr == NULL){
+        printf("Not able to open the file");
+    } else {
+            while(fgets(String, 100, fptr)){
+                printf("%s", String);
+            }
     }
 
     fclose(fptr);
