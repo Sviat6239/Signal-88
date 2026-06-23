@@ -6,37 +6,34 @@
 
 using namespace std;
 
-vector<string> split(const string& str, const string& delimiter) {
-    vector<string> tokens;
-    size_t prev = 0, pos = 0;
-    while ((pos = str.find(delimiter, prev)) != string::npos){
-        tokens.push_back(str.substr(prev, pos - prev));
-        prev = pos + delimiter.length();
-    }
-    tokens.push_back(str.substr(prev));
-    return tokens;
-}
-
 int main() {
-    string code_line;
-    vector<string> lines;
+    vector<vector<string>> code_lines;
 
-    ifstream code("code.bas");
+    ifstream f("code.bas");
+    string line;
 
-    while (getline (code, code_line)){
-        lines.push_back(code_line);
+    if (f.is_open()){
+        while (getline(f, line)){
+            if(!line.empty()){
+                vector<string> parts;
+                stringstream ss(line);
+                string word;
+
+                while (ss >> word){
+                    parts.push_back(word);
+                }
+
+                if (!parts.empty()){
+                    code_lines.push_back(parts);
+                }
+            }
+        }
+        f.close();
     }
-    code.close();
 
-    cout << "Our code divided into single line: " << endl;
-    for (const string& s : lines){
-        cout << "Stored: " << s << endl;
-    }
-
-    for (const string& s : lines) {
-        vector<string> splitted = split(s, " ");
-        for (const string& token : splitted){
-            cout << token;
+    for (const auto& row : code_lines){
+        for (const auto& word : row){
+            cout << word << " ";
         }
         cout << endl;
     }
