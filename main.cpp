@@ -6,25 +6,26 @@
 
 using namespace std;
 
-string split(const string& str){
-    const string whitespace = " \t\n\r\f\v";
-    size_t first = str.find_first_not_of(whitespace);
-    if (first == string::npos) return "";
-    size_t last = str.find_first_not_of(whitespace);
-    return str.substr(first, (last - first + 1));
+vector<string> split(const string& str, const string& delimiter) {
+    vector<string> tokens;
+    size_t prev = 0, pos = 0;
+    while ((pos = str.find(delimiter, prev)) != string::npos){
+        tokens.push_back(str.substr(prev, pos - prev));
+        prev = pos + delimiter.length();
+    }
+    tokens.push_back(str.substr(prev));
+    return tokens;
 }
 
 int main() {
     string code_line;
     vector<string> lines;
-    vector<string> line;
 
     ifstream code("code.bas");
 
     while (getline (code, code_line)){
         lines.push_back(code_line);
     }
-
     code.close();
 
     cout << "Our code divided into single line: " << endl;
@@ -32,15 +33,12 @@ int main() {
         cout << "Stored: " << s << endl;
     }
 
-    
-    for (const string& s : lines){
-        string splited = split(s);
-        line.push_back(splited);
-    }
-
-    cout << "Our striped lines:" << endl;
-    for (const string& s : line){
-        cout << "Splited: " << s << endl;
+    for (const string& s : lines) {
+        vector<string> splitted = split(s, " ");
+        for (const string& token : splitted){
+            cout << token;
+        }
+        cout << endl;
     }
 
     return 0;
