@@ -1,3 +1,4 @@
+//std includes
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -8,18 +9,22 @@
 #include <set>
 #include <stack>
 
+//llvm includes
 #include "llvm/CodeGen/Passes.h"
 #include "llvm/Passes/PassBuilder.h"
 #include "llvm/Analysis/TargetTransformInfo.h"
 
+//llvm IR includes
 #include "llvm/IR/LLVMContext.h"
 #include "llvm/IR/Module.h"
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/Function.h"
 
+//namespaces
 using namespace std;
 using namespace llvm;
 
+//entry poin - main function
 int main() {
     vector<vector<string>> code_lines;
     vector<vector<string>> output;
@@ -46,6 +51,7 @@ int main() {
 
     };
 
+    //llvm content init
     LLVMContext context;
     Module* module = new Module("basic_module", context);
     IRBuilder<> builder(context);
@@ -55,9 +61,11 @@ int main() {
     BasicBlock* entry = BasicBlock::Create(context, "entry", mainFunc);
     builder.SetInsertPoint(entry);
 
+    //reading file
     ifstream f("code.bas");
     string line;
 
+    //tokenizer
     if (f.is_open()){
         while (getline(f, line)){
             if(!line.empty()){
@@ -77,6 +85,7 @@ int main() {
         f.close();
     }
 
+    //main loop
     for (const auto& row : code_lines){
         if (row[0] == 'let'){
 
