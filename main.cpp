@@ -3,6 +3,10 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <unordered_map>
+#include <map>
+#include <set>
+#include <stack>
 
 #include "llvm/CodeGen/Passes.h"
 #include "llvm/Passes/PassBuilder.h"
@@ -18,8 +22,29 @@ using namespace llvm;
 
 int main() {
     vector<vector<string>> code_lines;
-    vector<vector<string>> int_variables;
-    vector<vector<string>> str_variables;
+    vector<vector<string>> output;
+
+    map<string, string> int_variables;
+    map<string, string> str_variables;
+
+    set<string> needed_functions;
+    set<string> needed_constants;
+
+    int temp_buffer_count = 0;
+    int str_to_print_count = 0;
+    int if_label_count = 0;
+
+    stack<int> if_stac;
+
+    map<string, string> string_buffers;
+
+    unordered_map<string, string> functions = {
+
+    };
+
+    unordered_map<string, string> constants = {
+
+    };
 
     ifstream f("code.bas");
     string line;
@@ -141,7 +166,7 @@ int main() {
         } else if (row[0] == 'apicall'){
 
         } else if (row[0] == 'syscall'){
-            
+
         }
 
     }
