@@ -46,6 +46,15 @@ int main() {
 
     };
 
+    LLVMContext context;
+    Module* module = new Module("basic_module", context);
+    IRBuilder<> builder(context);
+
+    FunctionType* funcType = FunctionType::get(builder.getInt32Ty(), false);
+    Function* mainFunc = FUnction::Create(FuncType, Function::ExternalLinkage, "main", module);
+    BasicBlock* entry = BasicBlock::Create(context, "entry", mainFunc);
+    builder.SetInsertPoint(entry);
+
     ifstream f("code.bas");
     string line;
 

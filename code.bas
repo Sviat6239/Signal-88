@@ -26,9 +26,9 @@ toint numA
 
 if numA == 10 then
     print "ten"
-elseif numA == 5 then
+elif numA == 5 then
     print "five"
-elseif numA == 15 then
+elif numA == 15 then
     print "fiveteen"
 else 
     print "another value"
