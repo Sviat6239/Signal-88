@@ -4,10 +4,22 @@
 #include <vector>
 #include <sstream>
 
+#include "llvm/CodeGen/Passes.h"
+#include "llvm/Passes/PassBuilder.h"
+#include "llvm/Analysis/TargetTransformInfo.h"
+
+#include "llvm/IR/LLVMContext.h"
+#include "llvm/IR/Module.h"
+#include "llvm/IR/IRBuilder.h"
+#include "llvm/IR/Function.h"
+
 using namespace std;
+using namespace llvm;
 
 int main() {
     vector<vector<string>> code_lines;
+    vector<string> int_variables;
+    vector<string> str_variables;
 
     ifstream f("code.bas");
     string line;
@@ -32,10 +44,9 @@ int main() {
     }
 
     for (const auto& row : code_lines){
-        for (const auto& word : row){
-            cout << word << " ";
+        if (row[0] == 'let'){
+
         }
-        cout << endl;
     }
 
     return 0;
