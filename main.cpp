@@ -18,8 +18,8 @@ using namespace llvm;
 
 int main() {
     vector<vector<string>> code_lines;
-    vector<string> int_variables;
-    vector<string> str_variables;
+    vector<vector<string>> int_variables;
+    vector<vector<string>> str_variables;
 
     ifstream f("code.bas");
     string line;
@@ -46,7 +46,96 @@ int main() {
     for (const auto& row : code_lines){
         if (row[0] == 'let'){
 
+        } else if (row[0] == 'add'){
+
+        } else if (row[0] == 'sub'){
+
+        } else if (row[0] == 'mul'){
+
+        } else if (row[0] == 'div'){
+
+        } else if (row[0] == 'sqr'){
+
+        } else if (row[0] == 'root'){
+
+        } else if (row[0] == 'pow'){
+
+        } else if (row[0] == 'log'){
+
+        } else if (row[0] == 'log10'){
+
+        } else if (row[0] == 'sin'){
+
+        } else if (row[0] == 'cos'){
+
+        } else if (row[0] == 'tg'){
+
+        } else if (row[0] == 'ctg'){
+
+        } else if (row[0] == 'arc-sin'){
+
+        } else if (row[0] == 'arc-cos'){
+
+        } else if (row[0] == 'arc-tg'){
+
+        } else if (row[0] == 'arc-ctg'){
+
+        } else if (row[0] == 'fact'){
+
+        } else if (row[0] == 'tetr'){
+
+        } else if (row[0] == 'mov'){
+
+        } else if (row[0] == 'print'){
+
+        } else if (row[0] == 'prtln'){
+
+        } else if (row[0] == 'read'){
+
+        } else if (row[0] == 'tostr'){
+
+        } else if (row[0] == 'toint'){
+
+        } else if (row[0] == 'tobin'){
+
+        } else if (row[0] == 'tohex'){
+
+        } else if (row[0] == 'tooct'){
+
+        } else if (row[0] == 'tostrbin'){
+
+        } else if (row[0] == 'tostrhex'){
+
+        } else if (row[0] == 'tostroct'){
+
+        } else if (row[0] == 'if'){
+
+        } else if (row[0] == 'elif'){
+
+        } else if (row[0] == 'else'){
+
+        } else if (row[0] == 'end'){
+
+        } else if (row[0] == 'label'){
+
+        } else if (row[0] == 'jmp'){
+
+        } else if (row[0] == 'jne'){
+
+        } else if (row[0] == 'je'){
+
+        } else if (row[0] == 'jge'){
+
+        } else if (row[0] == 'jg'){
+
+        } else if (row[0] == 'jle'){
+
+        } else if (row[0] == 'jl'){
+
+        } else if (row[0] == 'cmp'){
+            
         }
+
     }
 
     return 0;
