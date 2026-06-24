@@ -861,18 +861,6 @@ def compile_line(line):
         target_var = parts[1]
         buffer_name = f"_temp_str_{temp_buffer_count}"
         temp_buffer_count += 1
-
-        variables[buffer_name] = 'rb 20'
-
-        return (
-            f"   "
-        )
-
-    elif cmd == 'tobin':
-        needed_functions.add('tobin')
-        target_var = parts[1]
-        buffer_name = f"_temp_str_{temp_buffer_count}"
-        temp_buffer_count += 1
         variables[buffer_name] = 'rb 65'
         return (f"    mov rax, 0\n    mov rdi, 0\n    mov rsi, {buffer_name}\n"
                 f"    mov rdx, 65\n    syscall\n    mov byte [{buffer_name} + rax - 1], 0\n"
