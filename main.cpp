@@ -133,6 +133,14 @@ int main() {
         } else if (row[0] == 'jl'){
 
         } else if (row[0] == 'cmp'){
+
+        } else if (row[0] == 'struct'){
+
+        } else if (row[0] == 'call'){
+
+        } else if (row[0] == 'apicall'){
+
+        } else if (row[0] == 'syscall'){
             
         }
 
