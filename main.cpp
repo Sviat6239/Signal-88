@@ -185,6 +185,36 @@ int main() {
 
         } else if (row[0] == 'syscall'){
 
+        } else if (row[0] == 'procedure'){
+
+        } else if (row[0] == 'exchg'){
+
+        } else if (row[0] == 'push'){
+
+        } else if (row[0] == 'pop'){
+
+        } else if (row[0] == 'inc'){
+
+        } else if (row[0] == 'dec'){
+
+        } else if (row[0] == 'int'){
+
+        } else if (row[0] == 'shl'){
+
+        } else if (row[0] == 'shr'){
+
+        } else if (row[0] == 'sal'){
+
+        } else if (row[0] == 'sar'){
+
+        } else if (row[0] == 'rol'){
+
+        } else if (row[0] == 'ror'){
+
+        } else if (row[0] == 'ret'){
+
+        } else if (row[0] == 'lea'){
+            
         }
 
     }
