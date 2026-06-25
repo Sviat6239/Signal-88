@@ -90,12 +90,55 @@ int main() {
         if (row[0] == 'let'){
 
         } else if (row[0] == 'add'){
+            sgring target = row[1];
+            string op1 = row[2];
+            string op2 = row[3];
 
-        } else if (row[0] == 'sub'){
+            Value* valA = builder.CreateLoad(builder.getInt32Ty(), named_values[op1], "valA");
+            Value* valB = builder.CreateLoad(builder.getInt32Ty(), named_values[op2], "valB");
 
-        } else if (row[0] == 'mul'){
+            Value* sum = builder.CreateAdd(valA, valB, "sum");
 
-        } else if (row[0] == 'div'){
+            builder.CreateStore(sum, named_values[target]);
+            
+        } 
+        else if (row[0] == 'sub'){
+            string target = row[1];
+            string op1 = row[2];
+            string op2 = row[3];
+
+            Value* valA = builder.CreateLoad(builder.getInt32Ty(), named_values[op1], "valA");
+            Value* valB = builder.CreateLoad(builder.getInt32Ty(), named_values[op2], "valB");
+
+            Value* sum = builder.CreateSub(valA, valB, "sum");
+
+            builder.CreateStore(sum, named_values[target]);
+
+        } 
+        else if (row[0] == 'mul'){
+            string target = row[1];
+            string op1 = row[2];
+            string op2 = row[3];
+
+            Value* valA = builder.CreateLoad(builder.getInt32Ty(), named_values[op1], "valA");
+            Value* valB = builder.CreateLoad(builder.getInt32Ty(), named_values[op2], "valB");
+
+            Value* sum = builder.CreateMul(valA, valB, "sum");
+
+            builder.CreateStore(sum, named_values[target]);
+
+        } 
+        else if (row[0] == 'div'){
+            string target = row[1];
+            string op1 = row[2];
+            string op2 = row[3];
+
+            Value* valA = builder.CreateLoad(builder.getInt32Ty(), named_values[op1], "valA");
+            Value* valB = builder.CreateLoad(builder.getInt32Ty(), named_values[op2], "valB");
+
+            Value* sum = builder.CreateDiv(valA, valB, "sum");
+
+            builder.CreateStore(sum, named_values[target]);
 
         } else if (row[0] == 'sqr'){
 
