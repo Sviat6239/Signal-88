@@ -1,0 +1,7 @@
+let mut:str:msg1 = "Type something:\n>>";
+let mut:char[200]:buff;
+
+print("%s",msg1);
+read(buff);
+
+print("%s\n", buff);
