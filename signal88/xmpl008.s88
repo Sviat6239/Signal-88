@@ -1,4 +1,4 @@
-let umut:str:text = "Hi from DBASIC!";
+let imm:str:text = "Hi from DBASIC!";
 
 print("%str\n", text);
 print("%str\n", tostr(tobin(text)));
