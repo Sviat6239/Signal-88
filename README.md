@@ -1,4 +1,4 @@
-# dummyBASIC
+# Signal-88
 
 `dummyBASIC` is a tiny educational DBASIC -> FASM compiler written in Python.
 It reads a small BASIC-like source file, converts it into FASM-compatible x86_64 assembly, and writes the result to `output.asm`.
