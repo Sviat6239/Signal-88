@@ -224,14 +224,8 @@ TokenList lex(const char* source) {
                 list.tokens[list.count++] = create_token(TOKEN_CHAR, 0, NULL, "char", 0);
             else if (strcmp(buffer, "if") == 0)
                 list.tokens[list.count++] = create_token(TOKEN_IF, 0, NULL, NULL, 0);
-            else if (strcmp(buffer, "then") == 0)
-                list.tokens[list.count++] = create_token(TOKEN_THEN, 0, NULL, NULL, 0);
-            else if (strcmp(buffer, "elseif") == 0)
-                list.tokens[list.count++] = create_token(TOKEN_ELSEIF, 0, NULL, NULL, 0);
             else if (strcmp(buffer, "else") == 0)
                 list.tokens[list.count++] = create_token(TOKEN_ELSE, 0, NULL, NULL, 0);
-            else if (strcmp(buffer, "endif") == 0)
-                list.tokens[list.count++] = create_token(TOKEN_ENDIF, 0, NULL, NULL, 0);
             else if (strcmp(buffer, "for") == 0)
                 list.tokens[list.count++] = create_token(TOKEN_FOR, 0, NULL, NULL, 0);
             else if (strcmp(buffer, "while") == 0)
