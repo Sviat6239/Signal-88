@@ -2,12 +2,32 @@
 #define LEXER_H
 
 typedef enum{
+    TOKEN_NUM,
+    TOKEN_STR,
+    TOKEN_FLOAT,
     TOKEN_LET,
     TOKEN_ADD,
     TOKEN_MUL,
     TOKEN_SUB,
     TOKEN_DIV,
-    TOKEn_PRINT,
+    TOKEN_SQR,
+    TOKEN_ROOT,
+    TOKEN_SIN,
+    TOKEN_COS,
+    TOKEN_TAN,
+    TOKEN_CTG,
+    TOKEN_ARC_SIN,
+    TOKEN_ARC_COS,
+    TOKEN_ARC_TAN,
+    TOKEN_ARC_CTG,
+    TOKEN_LOG,
+    TOKEN_LOGTEN,
+    TOKEN_POW,
+    TOKEN_LABEL,
+    TOKEN_JMP,
+    TOKEN_PRINT,
+    TOKEN_PRTLN,
+    TOKEN_READ,
     TOKEN_TOSTR,
     TOKEN_TOINT,
     TOKEN_IF,
@@ -22,5 +42,66 @@ typedef enum{
     TOKEN_NOT_EQUAL,
     TOKEN_EXCLAMATION,
     TOKEN_QUESTION,
+    TOKEN_PLUS,
+    TOKEN_MINUS,
+    TOKEN_STAR,
+    TOKEN_SLASH,
+    TOKEN_BACKSLASH,
+    TOKEN_LPAREN,
+    TOKEN_RPAREN,
+    TOKEN_LBRACE,
+    TOKEN_RBRACE,
+    TOKEN_LCURLY,
+    TOKEN_RCURLY,
+    TOKEN_PIPE,
+    TOKEN_ARROW,
+    TOKEN_HASH,
+    TOKEN_TILDE,
+    TOKEN_PERCENT,
+    TOKEN_DOLLAR,
+    TOKEN_AT,
+    TOKEN_COMMA,
+    TOKEN_UNDERSCORE,
+    TOKEN_PLUS_EQUAL,
+    TOKEN_PLUS_PLUS,
+    TOKEN_MINUS_EQUAL,
+    TOKEN_MINUS_MINUS,
+    TOKEN_SEMICOLON,
+    TOKEN_COLON,
+    TOKEN_LARROW,
+    TOKEN_RARROW,
+    TOKEN_EOF,
     TOKEN_IDENTIFIER
-}
+} TokenType;
+
+typedef struct {
+    TokenType type;
+    int value;
+    char name[64];
+    const char *data_type;
+    int mutability;
+} Token;
+
+/*
+ * Token list structure
+ * Contains an array of tokens and a count
+ */
+typedef struct {
+    Token* tokens;
+    int count;
+} TokenList;
+
+/* Function declarations */
+
+/*
+ *   Takes a string containing source code and converts it into a list of tokens.
+ *   Each token represents a meaningful element of the language (number, operator, keyword, identifier, etc.).
+ */
+TokenList lex(const char* source);
+
+/*
+ *   Prints all tokens in a TokenList to the console, for debugging and verification purposes.
+ */
+void print_tokens(TokenList* list);
+
+#endif
