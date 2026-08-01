@@ -2,8 +2,8 @@
 #define LEXER_H
 
 typedef enum{
-    TOKEN_NUM,
-    TOKEN_STR,
+    TOKEN_NUMBER,
+    TOKEN_LITERAL,
     TOKEN_FLOAT,
     TOKEN_LET,
     TOKEN_ADD,
@@ -53,6 +53,7 @@ typedef enum{
     TOKEN_RBRACE,
     TOKEN_LCURLY,
     TOKEN_RCURLY,
+    TOKEN_AMPERSAND,
     TOKEN_PIPE,
     TOKEN_ARROW,
     TOKEN_HASH,
@@ -71,6 +72,25 @@ typedef enum{
     TOKEN_LARROW,
     TOKEN_RARROW,
     TOKEN_EOF,
+    TOKEN_MUT,
+    TOKEN_UMUT,
+    TOKEN_I64,
+    TOKEN_UI64,
+    TOKEN_I32,
+    TOKEN_UI32,
+    TOKEN_I16,
+    TOKEN_UI16,
+    TOKEN_I8,
+    TOKEN_UI8,
+    TOKEN_F64,
+    TOKEN_F32,
+    TOKEN_STR,
+    TOKEN_CHAR,
+    TOKEN_FUNC,
+    TOKEN_FOR,
+    TOKEN_WHILE,
+    TOKEN_SWITCH,
+    TOKEN_CASE,
     TOKEN_IDENTIFIER
 } TokenType;
 
