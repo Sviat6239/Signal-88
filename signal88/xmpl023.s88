@@ -1,0 +1,5 @@
+let mut:i32:num = 5;
+let mut:i64:buff;
+
+fact(buff, num);
+print("%i64\n", buff);
