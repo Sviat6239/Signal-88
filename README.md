@@ -1,201 +1,53 @@
 # Signal-88
 
-`dummyBASIC` is a tiny educational DBASIC -> FASM compiler written in Python.
-It reads a small BASIC-like source file, converts it into FASM-compatible x86_64 assembly, and writes the result to `output.asm`.
+This repository contains a small experimental frontend for a BASIC-like language. The current implementation is written in C and focuses on lexical analysis and parser scaffolding rather than full compilation to machine code or assembly.
 
-## Files
+## Project structure
 
-- `main.py` - the compiler script.
-- `code6.bas` - the default source file compiled by `main.py`.
-- `code1.bas` - a compact output example.
-- `code2.bas` - a simple variable copy example.
-- `code3.bas` - a number-to-text and text-to-number example.
-- `code4.bas` - an input-buffer example.
-- `code.bas` - a larger arithmetic and conditional example.
-- `code5.bas` - a larger arithmetic and conditional example.
-- `code7.bas` - a label and jump example.
-- `code8.bas` - a larger feature-tour example that uses all currently supported language features.
-- `code9.bas` and later numbered samples - experimental files that may use unimplemented math helpers.
-- `output.asm` - generated assembly output.
+- [singal-88.c](singal-88.c) — command-line entry point. It reads a source file from the command line, prints the source, tokenizes it, and attempts to build an AST.
+- [frontend/lexer.c](frontend/lexer.c) and [frontend/include/lexer.h](frontend/include/lexer.h) — lexer implementation. It recognizes numbers, strings, characters, identifiers, operators, and many keywords.
+- [frontend/parser.c](frontend/parser.c) and [frontend/include/parser.h](frontend/include/parser.h) — parser and AST scaffolding. The implementation is still incomplete and currently only provides placeholder logic.
+- [frontend/utils.c](frontend/utils.c) and [frontend/include/utils.h](frontend/include/utils.h) — helper code for reading files.
+- [legacy/](legacy/) — older BASIC examples and a previous Python prototype that are not wired into the current C-based frontend.
+- [compile.ps1](compile.ps1) — build helper script, but it still points to an older command and should be updated.
 
-## Current State
+## Current status
 
-The compiler currently supports a small but working slice of the language:
+The codebase is a work in progress:
 
-- `let` for numeric variables, string literals, bare declarations, and sized input buffers.
-- `add`, `sub`, `mul`, and `div`.
-- `mov` for direct variable copies.
-- `print` for string literals, string variables, and raw input buffers.
-- `prtln` for writing a newline.
-- `read` for stdin input into a buffer.
-- `tostr` and `toint` runtime helpers for converting between numbers and text.
-- `if`, `elseif`, `else`, and `end if`.
-- `label` and `jmp` for simple local jumps.
+- The lexer already handles a broad set of token types, including arithmetic operators, comparisons, string literals, and keywords such as let, print, read, if, else, label, and jmp.
+- The parser is not fully implemented yet.
+- There is no working FASM backend or generated assembly pipeline in the current code.
+- A fresh compile attempt still reports inconsistencies in the lexer/parser headers and token definitions, so the project does not build cleanly yet.
 
-The math and base-conversion commands that appear in the parser are currently stubs and are not implemented yet.
+## Build
 
-## Language Reference
-
-The compiler accepts a small instruction set:
-
-```text
-let name = 10
-let text = "hello"
-let buff 200
-mov target source
-add result left right
-sub result left right
-mul result left right
-div result left right
-print "hello"
-print name
-prtln
-read buff
-tostr value
-toint target
-if a == 10 then
-elseif a == 5 then
-else
-end if
-label loop
-jmp loop
-```
-
-### Statement Notes
-
-- `let name = 10` reserves a 64-bit variable.
-- `let buff 200` reserves a byte buffer for input.
-- `mov target source` copies one variable into another.
-- `print` can print string literals, string variables, and buffers that already contain text.
-- `tostr` converts a numeric value into a printable string stored in a temporary buffer.
-- `toint` reads text from stdin, parses it as an integer, and stores the result.
-- `if` supports `==`, `!=`, `<`, `<=`, `>`, and `>=`.
-- `label` and `jmp` are translated directly into local FASM labels and jumps.
-- `sqr`, `root`, `pow`, `log`, `log10`, `sin`, `cos`, `tg`, `ctg`, `arc-sin`, `arc-cos`, `arc-tg`, `arc-ctg`, `fact`, `tetr`, `tobin`, `tostrbin`, `todec`, `tostrdec`, `tohex`, `tostrhex`, `tooct`, and `tostroct` are parser stubs only.
-
-## Prerequisites
-
-- Python 3.7+ to run `main.py`.
-- Optional: FASM (Flat Assembler) if you want to assemble the generated `output.asm` into an executable.
-- On Windows, WSL is the easiest way to assemble and run the ELF64 output.
-
-## Quick Start
-
-1. Edit `code6.bas` in the project root, or change the `file` variable in `main.py` to point at a different source. If you want a clean end-to-end demo of the currently supported language features, start with `code8.bas`.
-2. Run the compiler:
+The project can be compiled with:
 
 ```bash
-python main.py
+clang singal-88.c frontend/lexer.c frontend/parser.c frontend/utils.c -Ifrontend/include -o signal88.exe
 ```
 
-3. The compiler writes `output.asm`.
-4. Assemble and run it if you have FASM installed:
+Run it with:
 
 ```bash
-fasm output.asm output
-chmod +x output
-./output
+./signal88.exe path/to/source.txt
 ```
 
-## Notes
+On Windows, the executable will be named `signal88.exe`.
 
-- The compiler is intentionally minimal and does not validate malformed input very deeply.
-- String literal handling is naive and does not support escaped quotes.
-- Variables declared with `let` are stored as 64-bit values unless they are declared as buffers.
-- The generated assembly uses Linux syscalls, so the output is intended for ELF64/Linux-style execution.
-- `main.py` reads `code6.bas` by default; change the `file` variable near the top of the script if you want a different input file.
-- String-backed numeric inputs are parsed with `toint` before arithmetic so `add`, `sub`, `mul`, and `div` operate on values, not ASCII bytes.
+## Usage notes
 
-## Examples
+- The program expects the path to a source file as its first command-line argument.
+- The current output is mainly diagnostic: it prints the source, the token list, and the AST structure.
+- The implementation is educational and experimental, so input validation and full language support are still incomplete.
 
-Simple output from [code1.bas](code1.bas):
+## Notes for contributors
 
-```text
-print "hello"
+If you want to extend the project, the most natural next steps are:
 
-prtln
-```
-
-Input and conversion from [code4.bas](code4.bas):
-
-```text
-let msg1 = "type some thing:>>>"
-let buff 200
-
-print msg1
-read buff
-
-tostr buff
-print buff
-
-prtln
-```
-
-Arithmetic and conditionals from [code5.bas](code5.bas):
-
-```text
-let numA = 10
-let numB = 20
-let numC = 0
-
-add numC numA numB
-print "text text text"
-
-if numA == 10 then
-    print "ten"
-elseif numA == 5 then
-    print "five"
-else
-    print "another value"
-end if
-```
-
-Direct copy and local jumps from [code2.bas](code2.bas) and [code7.bas](code7.bas):
-
-```text
-let target = 0
-let source = 55
-
-mov target source
-```
-
-```text
-label labelebele
-print "labelebele"
-jmp labelebele
-```
-
-Big feature tour from [code8.bas](code8.bas):
-
-```text
-let title = "dummyBASIC feature tour"
-let left = 24
-let right = 6
-let input 200
-let parsed = 0
-
-print title
-prtln
-print "enter a number for toint and press enter:"
-toint parsed
-tostr parsed
-print parsed
-read input
-print input
-tostr input
-print input
-add total left right
-if total == 30 then
-    print "total is 30"
-elseif total == 29 then
-    print "total is 29"
-else
-    print "total is something else"
-end if
-jmp finish
-label skipped
-print "this line is skipped by jmp"
-label finish
-print "demo complete"
-```
+1. Finish the parser and AST construction logic.
+2. Define a clear intermediate representation for statements and expressions.
+3. Add a backend that emits assembly or another target format.
+4. Bring [compile.ps1](compile.ps1) in line with the current build steps.
 

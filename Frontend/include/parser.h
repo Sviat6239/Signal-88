@@ -12,7 +12,6 @@ typedef enum{
     AST_STRING,
     AST_FLOAT,
     AST_CHARACTER,
-    AST_PRINT,
     AST_BINARY_OP,
     AST_VAR,
     AST_ASSIGN,
