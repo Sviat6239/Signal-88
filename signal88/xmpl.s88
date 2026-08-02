@@ -1,0 +1,5 @@
+let num:f32:num = 0.75;
+let num:f64:buff;
+
+arc-sin(buff, num);
+print("%f64\n", buff);
