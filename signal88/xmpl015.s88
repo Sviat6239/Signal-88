@@ -1,0 +1,5 @@
+let mut:i32:num = 60;
+let mut:i32:buff;
+
+sin(buff, num);
+print("%i32\n", buff);
