@@ -1,0 +1,5 @@
+let imm:i32:NUM = 25;
+let mut:i32:buff;
+
+log(buff, NUM);
+print("%i32", buff);
