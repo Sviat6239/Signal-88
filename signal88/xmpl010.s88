@@ -1,0 +1,5 @@
+let mut:i32:num = 9;
+let mut:i32:buff;
+
+root(buff, num);
+print("%i32", buff);
