@@ -1,0 +1,5 @@
+let mut:i32:num = 90;
+let mut:i32:buff;
+
+cos(buff, num);
+print("%i32\n", buff);
