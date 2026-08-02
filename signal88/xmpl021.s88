@@ -1,5 +1,5 @@
 let mut:i32:num = 71;
 let mut:f64:buff;
 
-arc-ctg(buff, num);
+arc-tan(buff, num);
 print("%f64\n", buff);
