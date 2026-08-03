@@ -73,7 +73,6 @@ ASTNode* parse_statement(TokenList* tokens, int* pos) {
 
         if (tokens->tokens[*pos].type != TOKEN_COLON){
             printf("Expected colon at pos=%d\n", *pos);
-            (*pos)++;
             exit(1);
         }
         (*pos)++;
@@ -88,7 +87,6 @@ ASTNode* parse_statement(TokenList* tokens, int* pos) {
 
         if (tokens->tokens[*pos].type != TOKEN_COLON){
             printf("Expected colon at pos=%d\n", *pos);
-            (*pos)++;
             exit(1);
         }
         (*pos)++;
@@ -101,7 +99,7 @@ ASTNode* parse_statement(TokenList* tokens, int* pos) {
         (*pos)++;
 
         if (tokens->tokens[*pos].type != TOKEN_EQUAL){
-            print("Syntax error: expected '=' at pos=%d\n", *pos);
+            printf("Syntax error: expected '=' at pos=%d\n", *pos);
             exit(1);
         }
         (*pos)++;
@@ -117,6 +115,26 @@ ASTNode* parse_statement(TokenList* tokens, int* pos) {
         (*pos)++;
 
         return create_node(AST_ASSIGN, 0, var.name, NULL, d_type, mutability, expr, NULL);
+    }
+
+    else if (current.type == TOKEN_PRINT) {
+        (*pos)++;
+
+        if (tokens->tokens[*pos].type != TOKEN_LPAREN) {
+            printf("Syntax error: expected '(' at pos=%d\n", *pos);
+            exit(1);
+        }
+        (*pos)++;
+
+        ASTNode *expr = parse_expression(tokens, pos); 
+
+        if (tokens->tokens[*pos].type != TOKEN_RPAREN) {
+            printf("Syntax error: expected ')' at pos=%d\n", *pos);
+            exit(1);
+        }
+        (*pos)++;
+
+        return create_node(AST_PRINT, 0, NULL, NULL, NULL, 0, expr, NULL);
     }
 }
 
