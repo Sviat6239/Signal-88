@@ -72,29 +72,51 @@ ASTNode* parse_statement(TokenList* tokens, int* pos) {
         }
 
         if (tokens->tokens[*pos].type != TOKEN_COLON){
-            printf("Expected colon on %d\n", tokens->tokens[*pos].line);
+            printf("Expected colon at pos=%d\n", *pos);
             (*pos)++;
-            return 1;
-        } else{
-            (*pos)++;
+            exit(1);
         }
+        (*pos)++;
 
         const char* d_type = "i32";
         TokenType t_type = tokens->tokens[*pos].type;
 
-        if(t_type >= TOKEN_I64 && t_type <= TOKEN_char){
+        if(t_type >= TOKEN_I64 && t_type <= TOKEN_CHAR){
             d_type = tokens->tokens[*pos].data_type;
             (*pos)++;
         }
 
         if (tokens->tokens[*pos].type != TOKEN_COLON){
-            printf("Expected colon on %d\n", tokens->tokens[*pos].line);
+            printf("Expected colon at pos=%d\n", *pos);
             (*pos)++;
-            return 1;
-        } else{
-            (*pos)++;
+            exit(1);
         }
+        (*pos)++;
 
+        if (tokens->tokens[*pos].type != TOKEN_IDENTIFIER){
+            printf("Syntax error: expected identifier at pos=%d\n", *pos);
+            exit(1);
+        }
+        Token var = tokens->tokens[*pos];
+        (*pos)++;
+
+        if (tokens->tokens[*pos].type != TOKEN_EQUAL){
+            print("Syntax error: expected '=' at pos=%d\n", *pos);
+            exit(1);
+        }
+        (*pos)++;
+
+        add_symbol(var.name, d_type);
+
+        ASTNode* expr = parse_expression(tokens, pos);
+
+        if (tokens->tokens[*pos].type != TOKEN_SEMICOLON){
+            printf("Syntax error: expected ';' at pos=%d\n", *pos);
+            exit(1);
+        }
+        (*pos)++;
+
+        return create_node(AST_ASSIGN, 0, var.name, NULL, d_type, mutability, expr, NULL);
     }
 }
 
