@@ -44,10 +44,4 @@ On Windows, the executable will be named `signal88.exe`.
 
 ## Notes for contributors
 
-If you want to extend the project, the most natural next steps are:
-
-1. Finish the parser and AST construction logic.
-2. Define a clear intermediate representation for statements and expressions.
-3. Add a backend that emits assembly or another target format.
-4. Bring [compile.ps1](compile.ps1) in line with the current build steps.
-
+There's no need right now
