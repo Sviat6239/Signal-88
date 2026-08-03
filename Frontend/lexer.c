@@ -196,8 +196,8 @@ TokenList lex(const char* source) {
                 list.tokens[list.count++] = create_token(TOKEN_TOINT, 0, NULL, NULL, 0);
             else if (strcmp(buffer, "mut") == 0)
                 list.tokens[list.count++] = create_token(TOKEN_MUT, 0, NULL, NULL, 1);
-            else if (strcmp(buffer, "umut") == 0)
-                list.tokens[list.count++] = create_token(TOKEN_UMUT, 0, NULL, NULL, 0);
+            else if (strcmp(buffer, "imm") == 0)
+                list.tokens[list.count++] = create_token(TOKEN_IMM, 0, NULL, NULL, 0);
             else if (strcmp(buffer, "i64") == 0)
                 list.tokens[list.count++] = create_token(TOKEN_I64, 0, NULL, "i64", 0);
             else if (strcmp(buffer, "i32") == 0)
@@ -236,6 +236,26 @@ TokenList lex(const char* source) {
                 list.tokens[list.count++] = create_token(TOKEN_CASE, 0, NULL, NULL, 0);
             else if (strcmp(buffer, "func") == 0)
                 list.tokens[list.count++] = create_token(TOKEN_FUNC, 0, NULL, NULL, 0);
+            else if (strcmp(buffer, "mov") == 0)
+                list.tokens[list.count++] = create_token(TOKEN_MOV, 0, NULL, NULL, 0);
+            else if (strcmp(buffer, "push") == 0)
+                list.tokens[list.count++] = create_token(TOKEN_PUSH, 0, NULL, NULL, 0);
+            else if (strcmp(buffer, "pop") == 0)
+                list.tokens[list.count++] = create_token(TOKEN_POP, 0, NULL, NULL, 0);
+            else if (strcmp(buffer, "cmp") == 0)
+                list.tokens[list.count++] = create_token(TOKEN_CMP, 0, NULL, NULL, 0);
+            else if (strcmp(buffer, "jne") == 0)
+                list.tokens[list.count++] = create_token(TOKEN_JNE, 0, NULL, NULL, 0);
+            else if (strcmp(buffer, "je") == 0)
+                list.tokens[list.count++] = create_token(TOKEN_JE, 0, NULL, NULL, 0);
+            else if (strcmp(buffer, "JGE") == 0)
+                list.tokens[list.count++] = create_token(TOKEN_JGE, 0, NULL, NULL, 0);
+            else if (strcmp(buffer, "jg") == 0)
+                list.tokens[list.count++] = create_token(TOKEN_JG, 0, NULL, NULL, 0);
+            else if (strcmp(buffer, "jle") == 0)
+                list.tokens[list.count++] = create_token(TOKEN_JLE, 0, NULL, NULL, 0);
+            else if (strcmp(buffer, "jl") == 0)
+                list.tokens[list.count++] = create_token(TOKEN_JL, 0, NULL, NULL, 0);
             else
                 list.tokens[list.count++] = create_token(TOKEN_IDENTIFIER, 0, buffer, NULL, 0);
 
@@ -401,7 +421,7 @@ void print_tokens(TokenList* list) {
             case TOKEN_UI32: printf("UI32\n"); break;
             case TOKEN_UI64: printf("UI64\n"); break;
             case TOKEN_UI8: printf("UI8\n"); break;
-            case TOKEN_UMUT: printf("UMUT\n"); break;
+            case TOKEN_IMM: printf("IMMUT\n"); break;
             case TOKEN_LPAREN: printf("LPAREN\n"); break;
             case TOKEN_RPAREN: printf("RPAREN\n"); break;
             case TOKEN_LBRACE: printf("LBRACE\n"); break;
@@ -434,6 +454,16 @@ void print_tokens(TokenList* list) {
             case TOKEN_COMMA: printf("COMMA\n"); break;
             case TOKEN_UNDERSCORE: printf("UNDERSCORE\n"); break;
             case TOKEN_STR: printf("TYPE_STR\n"); break;
+            case TOKEN_MOV: printf("MOV\n"); break;
+            case TOKEN_PUSH: printf("PUSH\n"); break;
+            case TOKEN_POP: printf("POP\n"); break;
+            case TOKEN_CMP: printf("CMP\n"); break;
+            case TOKEN_JNE: printf("JNE\n"); break;
+            case TOKEN_JE: printf("JE\n"); break;
+            case TOKEN_JGE: printf("JGE\n"); break;
+            case TOKEN_JG: printf("JG\n"); break;
+            case TOKEN_JLE: printf("JLE\n"); break;
+            case TOKEN_JL: printf("JL\n"); break;
             default: printf("UNKNOWN\n"); break;
         }
     }
