@@ -41,10 +41,24 @@ typedef enum{
     AST_LOGTEN,
     AST_SQR,
     AST_ROOT,
+    AST_TETR,
+    AST_FACT,
     AST_LABEL,
     AST_PRINT,
     AST_PRTLN,
-    AST_READ
+    AST_READ,
+    AST_CMP,
+    AST_PUSH,
+    AST_POP,
+    AST_JMP,
+    AST_JNE,
+    AST_JE,
+    AST_JGE,
+    AST_JG,
+    AST_JLE,
+    AST_JL,
+    AST_ENUM,
+    AST_STRUC
 } ASTNodeType;
 
 typedef struct ASTNode {
