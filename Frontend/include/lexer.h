@@ -100,6 +100,8 @@ typedef enum{
     TOKEN_JG,
     TOKEN_JLE,
     TOKEN_JL,
+    TOKEN_ENUM,
+    TOKEN_STRUCT,
     TOKEN_IDENTIFIER
 } TokenType;
 

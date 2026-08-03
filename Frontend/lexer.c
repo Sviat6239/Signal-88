@@ -256,6 +256,10 @@ TokenList lex(const char* source) {
                 list.tokens[list.count++] = create_token(TOKEN_JLE, 0, NULL, NULL, 0);
             else if (strcmp(buffer, "jl") == 0)
                 list.tokens[list.count++] = create_token(TOKEN_JL, 0, NULL, NULL, 0);
+            else if (strcmp(buffer, "enum") == 0)
+                list.tokens[list.count++] = create_token(TOKEN_ENUM, 0, NULL, NULL, 0);
+            else if (strcmp(buffer, "struct") == 0)
+                list.tokens[list.count++] = create_token(TOKEN_SRUCT, 0, NULL, NULL, 0);
             else
                 list.tokens[list.count++] = create_token(TOKEN_IDENTIFIER, 0, buffer, NULL, 0);
 
@@ -464,6 +468,8 @@ void print_tokens(TokenList* list) {
             case TOKEN_JG: printf("JG\n"); break;
             case TOKEN_JLE: printf("JLE\n"); break;
             case TOKEN_JL: printf("JL\n"); break;
+            case TOKEN_ENUM: printf("ENUM\n"); break;
+            case TOKEN_STRUCT: printf("STRUCT\n"); break;
             default: printf("UNKNOWN\n"); break;
         }
     }
