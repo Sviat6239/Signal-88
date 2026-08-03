@@ -23,6 +23,8 @@ typedef enum{
     TOKEN_LOG,
     TOKEN_LOGTEN,
     TOKEN_POW,
+    TOKEN_TETR,
+    TOKEN_FACT,
     TOKEN_LABEL,
     TOKEN_JMP,
     TOKEN_PRINT,

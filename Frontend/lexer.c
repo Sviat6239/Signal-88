@@ -180,6 +180,10 @@ TokenList lex(const char* source) {
                 list.tokens[list.count++] = create_token(TOKEN_LOGTEN, 0, NULL, NULL, 0);
             else if (strcmp(buffer, "pow") == 0)
                 list.tokens[list.count++] = create_token(TOKEN_POW, 0, NULL, NULL, 0);
+            else if (strcmp(buffer, "fact") == 0)
+                list.tokens[list.count++] = create_token(TOKEN_FACT, 0, NULL, NULL, 0);
+            else if (strcmp(buffer, "tetr") == 0)
+                list.tokens[list.count++] = create_token(TOKEN_TETR, 0, NULL, NULL, 0);
             else if (strcmp(buffer, "label") == 0)
                 list.tokens[list.count++] = create_token(TOKEN_LABEL, 0, NULL, NULL, 0);
             else if (strcmp(buffer, "jmp") == 0)
@@ -391,6 +395,8 @@ void print_tokens(TokenList* list) {
             case TOKEN_LOG: printf("LOG\n"); break;
             case TOKEN_LOGTEN: printf("LOGTEN\n"); break;
             case TOKEN_POW: printf("POW\n"); break;
+            case TOKEN_FACT: printf("FACT\n"); break;
+            case TOKEN_TETR: printf("TETR\n"); break;
             case TOKEN_LABEL: printf("LABEL\n"); break;
             case TOKEN_JMP: printf("JMP\n"); break;
             case TOKEN_PRINT: printf("PRINT\n"); break;
