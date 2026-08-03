@@ -62,6 +62,40 @@ ASTNode* create_node(ASTNodeType type, int value, const char* name, const char* 
 ASTNode* parse_statement(TokenList* tokens, int* pos) {
     Token current = tokens->tokens[*pos];
 
+    if (current.type == TOKEN_LET){
+        (*pos)++;
+
+        int mutability = 0;
+        if (tokens->tokens[*pos].type == TOKEN_MUT || tokens->tokens[*pos].type == TOKEN_IMM){
+            mutability = (tokens->tokens[*pos].type == TOKEN_MUT) ? 1 : 0;
+            (*pos)++;
+        }
+
+        if (tokens->tokens[*pos].type != TOKEN_COLON){
+            printf("Expected colon on %d\n", tokens->tokens[*pos].line);
+            (*pos)++;
+            return 1;
+        } else{
+            (*pos)++;
+        }
+
+        const char* d_type = "i32";
+        TokenType t_type = tokens->tokens[*pos].type;
+
+        if(t_type >= TOKEN_I64 && t_type <= TOKEN_char){
+            d_type = tokens->tokens[*pos].data_type;
+            (*pos)++;
+        }
+
+        if (tokens->tokens[*pos].type != TOKEN_COLON){
+            printf("Expected colon on %d\n", tokens->tokens[*pos].line);
+            (*pos)++;
+            return 1;
+        } else{
+            (*pos)++;
+        }
+
+    }
 }
 
 ASTNode* parse_expression(TokenList* tokens, int* pos) {
