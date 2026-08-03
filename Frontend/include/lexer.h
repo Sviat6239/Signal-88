@@ -72,7 +72,7 @@ typedef enum{
     TOKEN_RARROW,
     TOKEN_EOF,
     TOKEN_MUT,
-    TOKEN_UMUT,
+    TOKEN_IMM,
     TOKEN_I64,
     TOKEN_UI64,
     TOKEN_I32,
@@ -90,6 +90,16 @@ typedef enum{
     TOKEN_WHILE,
     TOKEN_SWITCH,
     TOKEN_CASE,
+    TOKEN_MOV,
+    TOKEN_PUSH,
+    TOKEN_POP,
+    TOKEN_CMP,
+    TOKEN_JNE,
+    TOKEN_JE,
+    TOKEN_JGE,
+    TOKEN_JG,
+    TOKEN_JLE,
+    TOKEN_JL,
     TOKEN_IDENTIFIER
 } TokenType;
 
