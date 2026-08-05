@@ -263,7 +263,7 @@ TokenList lex(const char* source) {
             else if (strcmp(buffer, "enum") == 0)
                 list.tokens[list.count++] = create_token(TOKEN_ENUM, 0, NULL, NULL, 0);
             else if (strcmp(buffer, "struct") == 0)
-                list.tokens[list.count++] = create_token(TOKEN_SRUCT, 0, NULL, NULL, 0);
+                list.tokens[list.count++] = create_token(TOKEN_STRUCT, 0, NULL, NULL, 0);
             else
                 list.tokens[list.count++] = create_token(TOKEN_IDENTIFIER, 0, buffer, NULL, 0);
 
@@ -404,8 +404,6 @@ void print_tokens(TokenList* list) {
             case TOKEN_READ: printf("READ\n"); break;
             case TOKEN_TOSTR: printf("TOSTR\n"); break;
             case TOKEN_TOINT: printf("TOINT\n"); break;
-            case TOKEN_THEN: printf("THEN\n"); break;
-            case TOKEN_ELSEIF: printf("ELSEIF\n"); break;
             case TOKEN_EOF: printf("EOF\n"); break;
             case TOKEN_EQUAL: printf("EQUAL\n"); break;
             case TOKEN_EQUAL_EQUAL: printf("EQUAL_EQUAL\n"); break;
