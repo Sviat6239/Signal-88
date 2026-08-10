@@ -8,17 +8,31 @@ typedef struct {
     const char* data_type;
 } Symbol;
 
-Symbol symbol_table[100];
+Symbol* symbol_table = NULL;
 int symbol_count = 0;
+int symbol_capacity = 0;
 
 typedef struct {
     char name[64];
     int target_instruction_index; 
 } Label;
 
-Label label_table[100];
+Label* label_table = NULL;
 int label_count = 0;
+int label_capacity = 0;
 
+void init_tables(int initial_capacity) {
+    symbol_capacity = initial_capacity;
+    symbol_table = (Symbol*)malloc(sizeof(Symbol) * symbol_capacity);
+    
+    label_capacity = initial_capacity;
+    label_table = (Label*)malloc(sizeof(Label) * label_capacity);
+
+    if (symbol_table == NULL || label_table == NULL) {
+        printf("Fatal error: Memory allocation failed during initialization!\n");
+        exit(1);
+    }
+}
 
 void add_symbol(const char* name, const char* data_type) {
     for (int i = 0; i < symbol_count; i++) {
