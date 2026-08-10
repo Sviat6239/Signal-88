@@ -47,16 +47,17 @@ TokenList lex(const char* source) {
             continue;
         }
 
-        if (c == '"') {
+        if (c == '\'' || c == '"') {
+            char quote_char = c;
             i++;
             char buffer[64];
             int j = 0;
-            while (source[i] != '"' && source[i] != '\0' && j < 63) {
+            while (source[i] != quote_char && source[i] != '\0' && j < 63) {
                 buffer[j++] = source[i++];
             }
             buffer[j] = '\0';
 
-            if (source[i] == '"') {
+            if (source[i] == quote_char) {
                 i++;
             } else {
                 printf("Syntax error: unterminated string literal\n");
@@ -64,26 +65,6 @@ TokenList lex(const char* source) {
             }
 
             list.tokens[list.count++] = create_token(TOKEN_LITERAL, 0, buffer, "str", 0);
-            continue;
-        }
-
-        if (c == '\'') {
-            i++;
-            if (source[i] == '\0' || source[i] == '\'') {
-                printf("Syntax error: empty character literal\n");
-                exit(1);
-            }
-            
-            char char_val = source[i++];
-            
-            if (source[i] == '\'') {
-                i++;
-            } else {
-                printf("Syntax error: unterminated character literal\n");
-                exit(1);
-            }
-
-            list.tokens[list.count++] = create_token(TOKEN_CHAR, (int)char_val, NULL, "char", 0);
             continue;
         }
 
