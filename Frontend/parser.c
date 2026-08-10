@@ -11,6 +11,15 @@ typedef struct {
 Symbol symbol_table[100];
 int symbol_count = 0;
 
+typedef struct {
+    char name[64];
+    int target_instruction_index; 
+} Label;
+
+Label label_table[100];
+int label_count = 0;
+
+
 void add_symbol(const char* name, const char* data_type) {
     for (int i = 0; i < symbol_count; i++) {
         if (strcmp(symbol_table[i].name, name) == 0) {
@@ -30,6 +39,28 @@ const char* lookup_symbol(const char* name) {
         }
     }
     return NULL;
+}
+
+void add_label(const char* name, int position) {
+    for (int i = 0; i < label_count; i++) {
+        if (strcmp(label_table[i].name, name) == 0) {
+            printf("Error: Duplicate label '%s'\n", name);
+            exit(1);
+        }
+    }
+    strncpy(label_table[label_count].name, name, 63);
+    label_table[label_count].name[63] = '\0';
+    label_table[label_count].target_instruction_index = position;
+    label_count++;
+}
+
+int lookup_label(const char* name) {
+    for (int i = 0; i < label_count; i++) {
+        if (strcmp(label_table[i].name, name) == 0) {
+            return label_table[i].target_instruction_index;
+        }
+    }
+    return -1;
 }
 
 ASTNode* create_node(ASTNodeType type, int value, const char* name, const char* literal_value, const char* data_type, int mutability, ASTNode* left, ASTNode* right) {
@@ -141,12 +172,33 @@ ASTNode* parse_statement(TokenList* tokens, int* pos) {
         (*pos)++;
 
         if (tokens->tokens[*pos].type != TOKEN_SEMICOLON){
-            printf("Syntax error: expected ':' at pos=%d\n", *pos);
+            printf("Syntax error: expected ';' at pos=%d\n", *pos);
             exit(1);
         }
         (*pos)++;
 
-        return create_node(AST_PRTLN, 0, NULL, NULL, NULL, 0, expr, NULL);
+        return create_node(AST_PRTLN, 0, NULL, NULL, NULL, 0, NULL, NULL);
+    }
+
+    else if (current.type == TOKEN_LABEL) {
+        Token label_token = tokens->tokens[*pos];
+        (*pos)++;
+
+        if (tokens->tokens[*pos].type != TOKEN_COLON) {
+            printf("Syntax error: expected ':' after label at pos=%d\n", *pos);
+            exit(1);
+        }
+        (*pos)++;
+
+        add_label(label_token.name, current_instruction_index);
+
+        if (tokens->tokens[*pos].type != TOKEN_SEMICOLON){
+            printf("Syntax error: expected ';' after label name at pos=%d\n", *pos);
+            exit(1);
+        }
+        (*pos)++;
+
+        return create_node(AST_LABEL, 0, label_token.name, NULL, NULL, 0, NULL, NULL);
     }
 }
 
