@@ -41,7 +41,20 @@ void add_symbol(const char* name, const char* data_type) {
             return;
         }
     }
+
+    if (symbol_count >= symbol_capacity) {
+        symbol_capacity = (symbol_capacity == 0) ? 8 : symbol_capacity * 2;
+        Symbol* new_table = (Symbol*)realloc(symbol_table, sizeof(Symbol) * symbol_capacity);
+        
+        if (new_table == NULL) {
+            printf("Fatal error: Memory re-allocation failed for symbol table!\n");
+            exit(1);
+        }
+        symbol_table = new_table;
+    }
+
     strncpy(symbol_table[symbol_count].name, name, 63);
+    symbol_table[symbol_count].name[63] = '\0';
     symbol_table[symbol_count].data_type = data_type;
     symbol_count++;
 }
