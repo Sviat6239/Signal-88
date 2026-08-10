@@ -1,4 +1,4 @@
-let met:i32:i;
+let mut:i32:i;
 
 label: _loop;
 
