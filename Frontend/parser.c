@@ -102,6 +102,15 @@ int lookup_label(const char* name) {
     return -1;
 }
 
+void free_tables() {
+    free(symbol_table);
+    free(label_table);
+    symbol_table = NULL;
+    label_table = NULL;
+    symbol_count = symbol_capacity = 0;
+    label_count = label_capacity = 0;
+}
+
 ASTNode* create_node(ASTNodeType type, int value, const char* name, const char* literal_value, const char* data_type, int mutability, ASTNode* left, ASTNode* right) {
     ASTNode* node = (ASTNode*)malloc(sizeof(ASTNode));
     node->type = type;
