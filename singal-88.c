@@ -7,6 +7,7 @@
 #include "frontend/include/utils.h"
 
 int main(int argc, char* argv[]){
+    init_tables(10);
     if (argc < 2){
         fprintf(stderr, "Error: No source file specified.\n");
         fprintf(stderr, "Please provide the path to the source code file when running the program.\n");
@@ -26,5 +27,6 @@ int main(int argc, char* argv[]){
     print_ast(ast, 0);
 
     free(source_code);
+    free_tables();
     return 0;
 }
