@@ -238,7 +238,7 @@ ASTNode* parse_statement(TokenList* tokens, int* pos) {
         }
         (*pos)++;
 
-        add_label(label_token.name, current_instruction_index);
+        add_label(label_token.name, *pos);
 
         if (tokens->tokens[*pos].type != TOKEN_SEMICOLON){
             printf("Syntax error: expected ';' after label name at pos=%d\n", *pos);
@@ -252,7 +252,7 @@ ASTNode* parse_statement(TokenList* tokens, int* pos) {
     else if (current.type == TOKEN_JMP){
         (*pos)++;
 
-        if (tokens->tokens[*pos].type == TOKEN_LPAREN){
+        if (tokens->tokens[*pos].type != TOKEN_LPAREN){
             printf("Syntax error: expected '(' at pos=%d\n", *pos);
             exit(1);
         }
@@ -260,13 +260,13 @@ ASTNode* parse_statement(TokenList* tokens, int* pos) {
 
         ASTNode *expr = parse_expression(tokens, pos);
 
-        if (tokens->tokens[*pos].type == TOKEN_RPAREN){
+        if (tokens->tokens[*pos].type != TOKEN_RPAREN){
             printf("Syntax error: expected ')' at pos = %d\n", *pos);
             exit(1);
         }
         (*pos)++;
 
-        if (tokens->tokens[*pos].type == TOKEN_SEMICOLON){
+        if (tokens->tokens[*pos].type != TOKEN_SEMICOLON){
             printf("Syntax error: expected ';' at pos = %d\n", *pos);
             exit(1);
         }
