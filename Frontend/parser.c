@@ -248,6 +248,32 @@ ASTNode* parse_statement(TokenList* tokens, int* pos) {
 
         return create_node(AST_LABEL, 0, label_token.name, NULL, NULL, 0, NULL, NULL);
     }
+
+    else if (current.type == TOKEN_JMP){
+        (*pos)++;
+
+        if (tokens->tokens[*pos].type == TOKEN_LPAREN){
+            printf("Syntax error: expected '(' at pos=%d\n", *pos);
+            exit(1);
+        }
+        (*pos)++;
+
+        ASTNode *expr = parse_expression(tokens, pos);
+
+        if (tokens->tokens[*pos].type == TOKEN_RPAREN){
+            printf("Syntax error: expected ')' at pos = %d\n", *pos);
+            exit(1);
+        }
+        (*pos)++;
+
+        if (tokens->tokens[*pos].type == TOKEN_SEMICOLON){
+            printf("Syntax error: expected ';' at pos = %d\n", *pos);
+            exit(1);
+        }
+        (*pos)++;
+
+        return create_node(AST_JMP, 0, NULL, NULL, NULL, 0, expr, NULL);
+    }
 }
 
 ASTNode* parse_expression(TokenList* tokens, int* pos) {
