@@ -75,6 +75,18 @@ void add_label(const char* name, int position) {
             exit(1);
         }
     }
+
+    if (label_count >= label_capacity) {
+        label_capacity = (label_capacity == 0) ? 8 : label_capacity * 2;
+        Label* new_table = (Label*)realloc(label_table, sizeof(Label) * label_capacity);
+        
+        if (new_table == NULL) {
+            printf("Fatal error: Memory re-allocation failed for label table!\n");
+            exit(1);
+        }
+        label_table = new_table;
+    }
+
     strncpy(label_table[label_count].name, name, 63);
     label_table[label_count].name[63] = '\0';
     label_table[label_count].target_instruction_index = position;
