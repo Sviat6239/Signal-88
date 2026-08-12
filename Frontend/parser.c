@@ -95,6 +95,54 @@ void expect_token(TokenList* tokens, int* pos, TokenType expected, const char* e
     (*pos)++;
 }
 
+ASTNode* parse_let(TokenList* tokens, int* pos) {
+    (*pos)++; // пропускаем TOKEN_LET
+
+    int mutability = 0;
+    if (tokens->tokens[*pos].type == TOKEN_MUT || tokens->tokens[*pos].type == TOKEN_IMM) {
+        mutability = (tokens->tokens[*pos].type == TOKEN_MUT) ? 1 : 0;
+        (*pos)++;
+    }
+
+    expect_token(tokens, pos, TOKEN_COLON, "expected ':' after mutability modifier");
+
+    char full_type[64] = "";
+    if (tokens->tokens[*pos].data_type) {
+        strcat(full_type, tokens->tokens[*pos].data_type);
+    }
+    (*pos)++;
+
+    if (tokens->tokens[*pos].type == TOKEN_LBRACKET) {
+        strcat(full_type, "[");
+        (*pos)++;
+        strcat(full_type, tokens->tokens[*pos].name);
+        (*pos)++;
+        expect_token(tokens, pos, TOKEN_RBRACKET, "expected ']' in array type definition");
+        strcat(full_type, "]");
+    }
+
+    expect_token(tokens, pos, TOKEN_COLON, "expected ':' after type definition");
+
+    Token var = tokens->tokens[*pos];
+    expect_token(tokens, pos, TOKEN_IDENTIFIER, "expected identifier name");
+
+    // Регистрируем переменную в таблице символов
+    add_symbol(var.name, full_type);
+
+    ASTNode* expr = NULL;
+    if (tokens->tokens[*pos].type == TOKEN_EQUAL) {
+        (*pos)++;
+        expr = parse_expression(tokens, pos);
+    }
+
+    if (tokens->tokens[*pos].type == TOKEN_SEMICOLON) {
+        (*pos)++;
+    }
+
+    // Создаем узел через твою родную функцию create_node
+    return create_node(AST_ASSIGN, 0, var.name, NULL, full_type, mutability, expr, NULL);
+}
+
 ASTNode* parse_expression(TokenList* tokens, int* pos) {
     Token current = tokens->tokens[*pos];
     ASTNode* left = NULL;
@@ -186,49 +234,9 @@ ASTNode* parse_statement(TokenList* tokens, int* pos) {
     Token current = tokens->tokens[*pos];
 
     if (current.type == TOKEN_LET) {
-        (*pos)++;
-
-        int mutability = 0;
-        if (tokens->tokens[*pos].type == TOKEN_MUT || tokens->tokens[*pos].type == TOKEN_IMM) {
-            mutability = (tokens->tokens[*pos].type == TOKEN_MUT) ? 1 : 0;
-            (*pos)++;
-        }
-
-        expect_token(tokens, pos, TOKEN_COLON, "expected ':' after mutability modifier");
-
-        char full_type[64] = "";
-        strcat(full_type, tokens->tokens[*pos].data_type);
-        (*pos)++;
-
-        if (tokens->tokens[*pos].type == TOKEN_LBRACKET) {
-            strcat(full_type, "[");
-            (*pos)++;
-            strcat(full_type, tokens->tokens[*pos].name);
-            (*pos)++;
-            expect_token(tokens, pos, TOKEN_RBRACKET, "expected ']' in array type definition");
-            strcat(full_type, "]");
-        }
-
-        expect_token(tokens, pos, TOKEN_COLON, "expected ':' after type definition");
-
-        Token var = tokens->tokens[*pos];
-        expect_token(tokens, pos, TOKEN_IDENTIFIER, "expected identifier name");
-
-        add_symbol(var.name, full_type);
-
-        ASTNode* expr = NULL;
-        if (tokens->tokens[*pos].type == TOKEN_EQUAL) {
-            (*pos)++;
-            expr = parse_expression(tokens, pos);
-        }
-
-        if (tokens->tokens[*pos].type == TOKEN_SEMICOLON) {
-            (*pos)++;
-        }
-
-        return create_node(AST_ASSIGN, 0, var.name, NULL, full_type, mutability, expr, NULL);
+        return parse_let(tokens, pos);
     }
-
+    
     else if (current.type == TOKEN_PRINT) {
         (*pos)++;
         expect_token(tokens, pos, TOKEN_LPAREN, "expected '(' after print");
