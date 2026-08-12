@@ -184,8 +184,6 @@ pub fn lex(source: &str) -> Vec<Token> {
                 column = 1;
             }
 
-            '+' => { tokens.push(Token::new(TokenKind::Plus, line, column)); chars.next(); column += 1; }
-            '-' => { tokens.push(Token::new(TokenKind::Minus, line, column)); chars.next(); column += 1; }
             '*' => { tokens.push(Token::new(TokenKind::Star, line, column)); chars.next(); column += 1; }
             '/' => { tokens.push(Token::new(TokenKind::Slash, line, column)); chars.next(); column += 1; }
             ';' => { tokens.push(Token::new(TokenKind::Semicolon, line, column)); chars.next(); column += 1; }
@@ -205,6 +203,19 @@ pub fn lex(source: &str) -> Vec<Token> {
                     tokens.push(Token::new(TokenKind::EqualEqual, line, start_col));
                 } else {
                     tokens.push(Token::new(TokenKind::Equal, line, start_col));
+                }
+            }
+
+            '-' =>{
+                let start_col = column;
+                chars.next();
+                column += 1;
+                if chars.peek() == Some(&'-'){
+                    chars.next();
+                    column += 1;
+                    rokens.push(Token::new(TokenKind::MinusMinus, line, start_col));
+                } else {
+                    tokens.push(Token::new(TokenKind::Minus, line, start_col));
                 }
             }
 
