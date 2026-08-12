@@ -116,6 +116,10 @@ pub enum TokenKind {
     Underscore,
     LArrow,
     RArrow,
+    LArrowLArrow,
+    RArrowRArrow,
+    StarEqual,
+    SlashEqual,
 
     Eof,
     Unknown(char),
@@ -324,7 +328,7 @@ pub fn lex(source: &str) -> Vec<Token> {
                     column += 1;
                     tokens.push(Token::new(TokenKind::GreaterEqual, line, start_col));
                 } else {
-                    tokens.push(Token::new(TokenKind::greater, line, start_col));
+                    tokens.push(Token::new(TokenKind::Greater, line, start_col));
                 }
             }
 
