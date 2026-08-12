@@ -1,0 +1,8 @@
+let mut:i32:numA = 52;
+let mut:i32:numB = 11;
+let mut:i32:buff;
+
+cmp(buff, numA, numB);
+
+je(buff, _true);
+jne(buff, _false);
