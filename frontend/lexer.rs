@@ -183,6 +183,30 @@ pub fn lex(source: &str) -> Vec<Token> {
                 column = 1;
             }
 
+            '"' => {
+                let start_col = column;
+                chars.next();
+                column += 1;
+                let mut string_val = String::new();
+
+                while let Some(&ch) = chars.peek() {
+                    if ch == '"' {
+                        chars.next();
+                        column += 1;
+                        break;
+                    } else if ch == '\n' {
+                        line += 1;
+                        column = 1;
+                        chars.next();
+                    } else {
+                        string_val.push(ch);
+                        chars.next();
+                        column += 1;
+                    }
+                }
+                tokens.push(Token::new(TokenKind::StrLiteral(string_val), line, start_col));
+            }
+
             ';' => { tokens.push(Token::new(TokenKind::Semicolon, line, column)); chars.next(); column += 1; }
             ':' => { tokens.push(Token::new(TokenKind::Colon, line, column)); chars.next(); column += 1; }
             '(' => { tokens.push(Token::new(TokenKind::LParen, line, column)); chars.next(); column += 1; }
