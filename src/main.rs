@@ -5,6 +5,7 @@ mod frontend;
 
 use frontend::lexer;
 use frontend::utils;
+use frontend::parser;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -25,8 +26,8 @@ fn main() {
     println!("Tokens finished. Printing tokens:");
     println!("{:#?}", tokens);
 
-    //println!("\nStarting Parser...");
-    //let ast = parser::parse(&tokens);
+    println!("\nStarting Parser...");
+    let ast = parser::parse(&tokens);
 
     //println!("\nAST Tree:");
     //println!("{:#?}", ast);
