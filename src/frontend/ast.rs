@@ -33,3 +33,13 @@ pub enum Stmt {
 pub struct Program {
     pub statements: Vec<Stmt>,
 }
+
+impl Expr {
+    pub fn binary(left: Expr, op: BinaryOpKind, right: Expr) -> Self {
+        Expr::BinaryOp {
+            left: Box::new(left),
+            op,
+            right: Box::new(right),
+        }
+    }
+}

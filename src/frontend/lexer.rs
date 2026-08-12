@@ -365,7 +365,7 @@ pub fn lex(source: &str) -> Vec<Token> {
             }
             
 
-            'a'..='z' | 'A'..='Z' | '_' => {
+            'a'..='z' | 'A'..='Z' => {
                 let start_col = column;
                 let mut ident = String::new();
 
