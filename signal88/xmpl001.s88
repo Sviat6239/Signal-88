@@ -18,7 +18,6 @@ mul(numC, numC, numA);
 div(numC, numG, numD);
 
 print("text text text");
-print('another text text text');
 let mut:str:strA = tostr(numA);
 print(strA);
 

@@ -367,10 +367,136 @@ ASTNode* parse(TokenList* tokens) {
 
 void print_ast(ASTNode* node, int indent) {
     if (node == NULL) return;
+
     for (int i = 0; i < indent; i++) printf("  ");
-    printf("ASTNode [Type: %d, Name: '%s', Type: '%s']\n", node->type, node->name, node->data_type ? node->data_type : "none");
-    
-    if (node->left) print_ast(node->left, indent + 1);
-    if (node->right) print_ast(node->right, indent + 1);
-    if (node->next) print_ast(node->next, indent);
+
+    switch (node->type) {
+        case AST_NUMBER:
+            printf("AST_NUMBER(%d, type: %s)\n", node->value, node->data_type ? node->data_type : "i32");
+            break;
+
+        case AST_STRING:
+            printf("AST_STRING(\"%s\")\n", node->literal_value[0] != '\0' ? node->literal_value : node->name);
+            break;
+
+        case AST_CHARACTER:
+            printf("AST_CHARACTER('%c', value: %d)\n", (char)node->value, node->value);
+            break;
+
+        case AST_VAR:
+            printf("AST_VAR(name: %s, type: %s)\n", node->name, node->data_type ? node->data_type : "unknown");
+            break;
+
+        case AST_ASSIGN:
+            printf("AST_ASSIGN(var: %s, type: %s, mut: %d)\n", 
+                   node->name, 
+                   node->data_type ? node->data_type : "reassign", 
+                   node->mutability);
+            if (node->left) print_ast(node->left, indent + 1);
+            break;
+
+        case AST_BINARY_OP:
+            if (node->value == 'E') {
+                printf("AST_BINARY_OP(==)\n");
+            } else {
+                printf("AST_BINARY_OP(%c)\n", node->value);
+            }
+            if (node->left) print_ast(node->left, indent + 1);
+            if (node->right) print_ast(node->right, indent + 1);
+            break;
+
+        case AST_PRINT:
+            printf("AST_PRINT\n");
+            for (ASTNode* arg = node->left; arg != NULL; arg = arg->next) {
+                print_ast(arg, indent + 1);
+            }
+            break;
+
+        case AST_PRTLN:
+            printf("AST_PRTLN\n");
+            break;
+
+        case AST_LABEL:
+            printf("AST_LABEL(name: %s)\n", node->name);
+            break;
+
+        case AST_JMP:
+            printf("AST_JMP(target: %s)\n", node->name);
+            break;
+
+        case AST_IF:
+            printf("AST_IF\n");
+            for (int i = 0; i < indent + 1; i++) printf("  ");
+            printf("Condition:\n");
+            print_ast(node->left, indent + 2);
+            
+            if (node->right) {
+                print_ast(node->right, indent + 1);
+            }
+            break;
+
+        case AST_ELSE:
+            printf("AST_BRANCH (then/else)\n");
+            if (node->left) {
+                for (int i = 0; i < indent + 1; i++) printf("  ");
+                printf("Then Body:\n");
+                for (ASTNode* stmt = node->left; stmt != NULL; stmt = stmt->next) {
+                    print_ast(stmt, indent + 2);
+                }
+            }
+            if (node->right) {
+                for (int i = 0; i < indent + 1; i++) printf("  ");
+                printf("Else Body:\n");
+                if (node->right->type == AST_IF) {
+                    print_ast(node->right, indent + 2);
+                } else {
+                    for (ASTNode* stmt = node->right; stmt != NULL; stmt = stmt->next) {
+                        print_ast(stmt, indent + 2);
+                    }
+                }
+            }
+            break;
+
+        case AST_CALL:
+            printf("AST_CALL(func: %s)\n", node->name);
+            for (ASTNode* arg = node->left; arg != NULL; arg = arg->next) {
+                print_ast(arg, indent + 1);
+            }
+            break;
+
+        case AST_FUNC:
+            printf("AST_FUNC(name: %s, return_type: %s)\n", node->name, node->data_type ? node->data_type : "void");
+            
+            if (node->left != NULL) {
+                for (int i = 0; i < indent + 1; i++) printf("  ");
+                printf("Params:\n");
+                for (ASTNode* p = node->left; p != NULL; p = p->next) {
+                    print_ast(p, indent + 2);
+                }
+            }
+
+            if (node->right != NULL) {
+                for (int i = 0; i < indent + 1; i++) printf("  ");
+                printf("Body:\n");
+                for (ASTNode* stmt = node->right; stmt != NULL; stmt = stmt->next) {
+                    print_ast(stmt, indent + 2);
+                }
+            }
+            break;
+
+        case AST_RETURN:
+            printf("AST_RETURN\n");
+            if (node->left) print_ast(node->left, indent + 1);
+            break;
+
+        default:
+            printf("AST_NODE(type: %d, name: '%s')\n", node->type, node->name);
+            if (node->left) print_ast(node->left, indent + 1);
+            if (node->right) print_ast(node->right, indent + 1);
+            break;
+    }
+
+    if (node->type != AST_VAR && node->next != NULL) {
+        print_ast(node->next, indent);
+    }
 }

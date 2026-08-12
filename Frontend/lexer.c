@@ -35,7 +35,7 @@ Token create_token(TokenType type, int value, const char* name, const char *data
 
 TokenList lex(const char* source) {
     TokenList list;
-    list.tokens = malloc(128 * sizeof(Token));
+    list.tokens = malloc(1024 * sizeof(Token));
     list.count = 0;
 
     int i = 0;
@@ -255,8 +255,10 @@ TokenList lex(const char* source) {
             case '+':
                 if (source[i + 1] == '='){
                     list.tokens[list.count++] = create_token(TOKEN_PLUS_EQUAL, 0, NULL, NULL, 0);
+                    i++;
                 } else if (source[i + 1] == '+'){
                     list.tokens[list.count++] = create_token(TOKEN_PLUS_PLUS, 0, NULL, NULL, 0);
+                    i++;
                 } else {
                     list.tokens[list.count++] = create_token(TOKEN_PLUS, 0, NULL, NULL, 0);
                 }
@@ -264,8 +266,10 @@ TokenList lex(const char* source) {
             case '-':
                 if (source[i + 1] == '='){
                     list.tokens[list.count++] = create_token(TOKEN_MINUS_EQUAL, 0, NULL, NULL, 0);
+                    i++;
                 } else if (source[i + 1] == '-'){
                     list.tokens[list.count++] = create_token(TOKEN_MINUS_MINUS, 0, NULL, NULL, 0);
+                    i++;
                 } else if (source[i + 1] == '>') {
                     list.tokens[list.count++] = create_token(TOKEN_RARROW, 0, NULL, NULL, 0);
                     i++;

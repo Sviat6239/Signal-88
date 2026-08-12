@@ -10,20 +10,29 @@ int main(int argc, char* argv[]){
     init_tables(10);
     if (argc < 2){
         fprintf(stderr, "Error: No source file specified.\n");
-        fprintf(stderr, "Please provide the path to the source code file when running the program.\n");
-        fprintf(stderr, "Example usage: %s examples/test.txt\n", argv[0]);
         return EXIT_FAILURE;
     }
 
     char* source_code = read_file(argv[1]);
     printf("Source code:\n%s\n\n", source_code);
+    fflush(stdout);
 
+    printf("Starting Lexer...\n");
+    fflush(stdout);
+    
     TokenList tokens = lex(source_code);
-    printf("Tokens:\n");
+    
+    printf("Tokens finished. Printing tokens:\n");
+    fflush(stdout);
     print_tokens(&tokens);
 
+    printf("\nStarting Parser...\n");
+    fflush(stdout);
+    
     ASTNode* ast = parse(&tokens);
-    printf("\nAST:\n");
+    
+    printf("\nAST Tree:\n");
+    fflush(stdout);
     print_ast(ast, 0);
 
     free(source_code);
