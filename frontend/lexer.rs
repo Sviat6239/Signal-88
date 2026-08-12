@@ -113,12 +113,9 @@ pub enum TokenKind {
     Dollar,
     At,
     Comma,
-    Dash,
     Underscore,
     LArrow,
-    LArrowLArrow,
     RArrow,
-    RArrowRArrow,
 
     Eof,
     Unknown(char),
@@ -239,6 +236,10 @@ pub fn lex(source: &str) -> Vec<Token> {
                     chars.next();
                     column += 1;
                     rokens.push(Token::new(TokenKind::MinusEqual, line, start_col));
+                } else if chars.peek() == Some(&'>'){
+                    chars.next();
+                    column += 1;
+                    rokens.push(Token::new(TokenKind::RArrow, line, start_col));
                 } else {
                     tokens.push(Token::new(TokenKind::Minus, line, start_col));
                 }
@@ -273,6 +274,10 @@ pub fn lex(source: &str) -> Vec<Token> {
                     chars.next();
                     column += 1;
                     rokens.push(Token::new(TokenKind::LessEqual, line, start_col));
+                } else if chars.peek() == Some(&'-'){
+                    chars.next();
+                    column += 1;
+                    rokens.push(Token::new(TokenKind::LArrow, line, start_col));
                 } else {
                     tokens.push(Token::new(TokenKind::Less, line, start_col));
                 }
