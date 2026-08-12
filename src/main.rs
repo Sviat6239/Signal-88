@@ -1,9 +1,10 @@
 use std::env;
 use std::process;
 
-mod ./frontend/lexer;
-mod ./frontend/parser;
-mod ./frontend/utils;
+mod frontend;
+
+use frontend::lexer;
+use frontend::utils;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -24,11 +25,11 @@ fn main() {
     println!("Tokens finished. Printing tokens:");
     println!("{:#?}", tokens);
 
-    println!("\nStarting Parser...");
-    let ast = parser::parse(&tokens);
+    //println!("\nStarting Parser...");
+    //let ast = parser::parse(&tokens);
 
-    println!("\nAST Tree:");
-    println!("{:#?}", ast);
+    //println!("\nAST Tree:");
+    //println!("{:#?}", ast);
 
 
 }
