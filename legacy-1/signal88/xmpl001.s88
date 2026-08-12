@@ -1,0 +1,32 @@
+let mut:i32:numA = 10;
+let mut:i32:numB = 20;
+let mut:i32:numC = 0;
+let mut:i32:numD = 5;
+let mut:i32:numE = 2;
+let mut:i32:numF = 3;
+let mut:i32:numG = 1;
+
+add(numC, numA, numB);
+add(numC, numC, numD);
+add(numC, numC, numE);
+add(numC, numC, numF);
+
+sub(numC, numC, numD);
+add(numC, numC, numD);
+
+mul(numC, numC, numA);
+div(numC, numG, numD);
+
+print("text text text");
+let mut:str:strA = tostr(numA);
+print(strA);
+
+if(numA == 10){
+    print("ten");
+} else if (numA == 5){
+    print("five");
+} else if (numA == 15){
+    print("fiveteen");
+} else{
+    print("another value");
+}

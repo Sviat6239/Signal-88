@@ -1,0 +1,5 @@
+let mut:i32:num = 3;
+let mut:i64:buff;
+
+tetr(buff, num);
+print("%i64\n", buff);

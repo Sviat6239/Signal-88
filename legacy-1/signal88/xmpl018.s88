@@ -1,0 +1,5 @@
+let mut:i32:num = 120;
+let mut:i32:buff;
+
+ctg(buff, num);
+print("%i32\n", buff);

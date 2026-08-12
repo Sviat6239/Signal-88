@@ -1,0 +1,3 @@
+label: _labelebele;
+print("labelebele\n");
+jmp(_labelebele);

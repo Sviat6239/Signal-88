@@ -1,0 +1,5 @@
+let mut:i32:num = 100;
+let mut:i32:buff;
+
+log10(buff, num);
+print("%i32\n", buff);

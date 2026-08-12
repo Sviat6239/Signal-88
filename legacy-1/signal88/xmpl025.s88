@@ -1,0 +1,6 @@
+let mut:i32:i;
+
+label: _loop;
+    print("%i32\n", i);
+    i++;
+    jmp(_loop);
