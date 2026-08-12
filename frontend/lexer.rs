@@ -214,6 +214,19 @@ pub fn lex(source: &str) -> Vec<Token> {
                 }
             }
 
+            '!' => {
+                let start_col = column;
+                chars.next();
+                column += 1;
+                if chars.peek() == Some(&'=') {
+                    chars.next();
+                    column += 1;
+                    tokens.push(Token::new(TokenKind::NotEqual, line, start_col));
+                } else {
+                    tokens.push(Token::new(TokenKind::Exclamation, line, start_col));
+                }
+            }
+
             '-' =>{
                 let start_col = column;
                 chars.next();
