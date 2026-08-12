@@ -280,8 +280,8 @@ TokenList lex(const char* source) {
             case ':': list.tokens[list.count++] = create_token(TOKEN_COLON, 0, NULL, NULL, 0); break;
             case '(': list.tokens[list.count++] = create_token(TOKEN_LPAREN, 0, NULL, NULL, 0); break;
             case ')': list.tokens[list.count++] = create_token(TOKEN_RPAREN, 0, NULL, NULL, 0); break;
-            case '[': list.tokens[list.count++] = create_token(TOKEN_LCURLY, 0, NULL, NULL, 0); break;
-            case ']': list.tokens[list.count++] = create_token(TOKEN_RCURLY, 0, NULL, NULL, 0); break;
+            case '[': list.tokens[list.count++] = create_token(TOKEN_LBRACKET, 0, NULL, NULL, 0); break;
+            case ']': list.tokens[list.count++] = create_token(TOKEN_RBRACKET, 0, NULL, NULL, 0); break;
             case '{': list.tokens[list.count++] = create_token(TOKEN_LBRACE, 0, NULL, NULL, 0); break;
             case '}': list.tokens[list.count++] = create_token(TOKEN_RBRACE, 0, NULL, NULL, 0); break;
             case '?': list.tokens[list.count++] = create_token(TOKEN_QUESTION, 0, NULL, NULL, 0); break;
