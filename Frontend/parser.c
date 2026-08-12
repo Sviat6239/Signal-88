@@ -254,6 +254,53 @@ ASTNode* parse_statement(TokenList* tokens, int* pos) {
         return create_node(AST_PRINT, 0, NULL, NULL, NULL, 0, args_head, NULL);
     }
 
+    else if (current.type == TOKEN_ADD || current.type == TOKEN_SUB || 
+             current.type == TOKEN_MUL || current.type == TOKEN_DIV) {
+        
+        ASTNode* node = malloc(sizeof(ASTNode));
+        memset(node, 0, sizeof(ASTNode));
+        node->type = AST_CALL;
+        
+        if (current.type == TOKEN_ADD) strcpy(node->name, "add");
+        else if (current.type == TOKEN_SUB) strcpy(node->name, "sub");
+        else if (current.type == TOKEN_MUL) strcpy(node->name, "mul");
+        else if (current.type == TOKEN_DIV) strcpy(node->name, "div");
+
+        (*pos)++;
+
+        if (tokens->tokens[*pos].type == TOKEN_LPAREN) {
+            (*pos)++;
+        }
+
+        ASTNode* args_head = NULL;
+        ASTNode* args_tail = NULL;
+
+        while (tokens->tokens[*pos].type != TOKEN_RPAREN && 
+               tokens->tokens[*pos].type != TOKEN_EOF) {
+            
+            ASTNode* arg = parse_expression(tokens, pos);
+            if (arg) {
+                if (!args_head) {
+                    args_head = arg;
+                    args_tail = arg;
+                } else {
+                    args_tail->next = arg;
+                    args_tail = arg;
+                }
+            }
+
+            if (tokens->tokens[*pos].type == TOKEN_COMMA) {
+                (*pos)++;
+            }
+        }
+
+        if (tokens->tokens[*pos].type == TOKEN_RPAREN) (*pos)++;
+        if (tokens->tokens[*pos].type == TOKEN_SEMICOLON) (*pos)++;
+
+        node->left = args_head;
+        return node;
+    }
+
     else if (current.type == TOKEN_PRTLN) {
         (*pos)++;
         expect_token(tokens, pos, TOKEN_SEMICOLON, "expected ';' after prtln");
