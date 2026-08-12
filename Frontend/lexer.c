@@ -415,6 +415,8 @@ void print_tokens(TokenList* list) {
             case TOKEN_RPAREN: printf("RPAREN\n"); break;
             case TOKEN_LBRACE: printf("LBRACE\n"); break;
             case TOKEN_RBRACE: printf("RBRACE\n"); break;
+            case TOKEN_LBRACKET: printf("LBRACKET\n"); break;
+            case TOKEN_RBRACKET: printf("RBRACKET\n"); break;
             case TOKEN_LCURLY: printf("LCURLY\n"); break;
             case TOKEN_RCURLY: printf("RCURLY\n"); break;
             case TOKEN_GREATER: printf("GREATER\n"); break;
