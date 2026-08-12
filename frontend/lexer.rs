@@ -237,15 +237,15 @@ pub fn lex(source: &str) -> Vec<Token> {
                 if chars.peek() == Some(&'-'){
                     chars.next();
                     column += 1;
-                    rokens.push(Token::new(TokenKind::MinusMinus, line, start_col));
+                    tokens.push(Token::new(TokenKind::MinusMinus, line, start_col));
                 } else if chars.peek() == Some(&'='){
                     chars.next();
                     column += 1;
-                    rokens.push(Token::new(TokenKind::MinusEqual, line, start_col));
+                    tokens.push(Token::new(TokenKind::MinusEqual, line, start_col));
                 } else if chars.peek() == Some(&'>'){
                     chars.next();
                     column += 1;
-                    rokens.push(Token::new(TokenKind::RArrow, line, start_col));
+                    tokens.push(Token::new(TokenKind::RArrow, line, start_col));
                 } else {
                     tokens.push(Token::new(TokenKind::Minus, line, start_col));
                 }
@@ -258,11 +258,11 @@ pub fn lex(source: &str) -> Vec<Token> {
                 if chars.peek() == Some(&'+'){
                     chars.next();
                     column += 1;
-                    rokens.push(Token::new(TokenKind::PlusPlus, line, start_col));
+                    tokens.push(Token::new(TokenKind::PlusPlus, line, start_col));
                 } else if chars.peek() == Some(&'='){
                     chars.next();
                     column += 1;
-                    rokens.push(Token::new(TokenKind::PlusEqual, line, start_col));
+                    tokens.push(Token::new(TokenKind::PlusEqual, line, start_col));
                 } else {
                     tokens.push(Token::new(TokenKind::Plus, line, start_col));
                 }
@@ -275,15 +275,15 @@ pub fn lex(source: &str) -> Vec<Token> {
                 if chars.peek() == Some(&'<'){
                     chars.next();
                     column += 1;
-                    rokens.push(Token::new(TokenKind::LArrowLArrow, line, start_col));
+                    tokens.push(Token::new(TokenKind::LArrowLArrow, line, start_col));
                 } else if chars.peek() == Some(&'='){
                     chars.next();
                     column += 1;
-                    rokens.push(Token::new(TokenKind::LessEqual, line, start_col));
+                    tokens.push(Token::new(TokenKind::LessEqual, line, start_col));
                 } else if chars.peek() == Some(&'-'){
                     chars.next();
                     column += 1;
-                    rokens.push(Token::new(TokenKind::LArrow, line, start_col));
+                    tokens.push(Token::new(TokenKind::LArrow, line, start_col));
                 } else {
                     tokens.push(Token::new(TokenKind::Less, line, start_col));
                 }
@@ -296,11 +296,11 @@ pub fn lex(source: &str) -> Vec<Token> {
                 if chars.peek() == Some(&'>'){
                     chars.next();
                     column += 1;
-                    rokens.push(Token::new(TokenKind::RArrowRArrow, line, start_col));
+                    tokens.push(Token::new(TokenKind::RArrowRArrow, line, start_col));
                 } else if chars.peek() == Some(&'='){
                     chars.next();
                     column += 1;
-                    rokens.push(Token::new(TokenKind::GreaterEqual, line, start_col));
+                    tokens.push(Token::new(TokenKind::GreaterEqual, line, start_col));
                 } else {
                     tokens.push(Token::new(TokenKind::greater, line, start_col));
                 }
