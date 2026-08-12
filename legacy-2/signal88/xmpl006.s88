@@ -1,0 +1,37 @@
+let mut:char[40]:num1;
+let mut:char[40]:num2;
+
+let mut:i32:buf;
+
+print("Enter first number:\n>>>");
+read(num1);
+
+print("\nEnter second number:\n>>>");
+read(num2);
+
+add(buf, toint(num1), toint(num2));
+print("%i32\n", buf);
+
+sub(buf, toint(num1), toint(num2));
+print("%i32\n", buf);
+
+mul(buf, toint(num1), toint(num2));
+print("%i32\n", buf);
+
+div(buf, toint(num1), toint(num2));
+print("%i32\n", buf);
+
+sqr(buf, toint(num1));
+print("%i32\n", buf);
+
+sqr(buf, toint(num2));
+print("%i32\n", buf);
+
+root(buf, toint(num1));
+print("%i32\n", buf);
+
+root(buf, toint(num2));
+print("%i32\n", buf);
+
+pow(buf, toint(num1), toint(num2));
+print("%i32\n", buf);

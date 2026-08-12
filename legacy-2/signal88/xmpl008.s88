@@ -1,0 +1,6 @@
+let imm:str:text = "Hi from DBASIC!";
+
+print("%str\n", text);
+print("%str\n", tostr(tobin(text)));
+print("%str\n", tostr(tohex(text)));
+print("%str\n", tostr(tooct(text)));

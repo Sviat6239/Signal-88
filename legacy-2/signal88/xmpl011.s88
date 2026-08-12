@@ -1,0 +1,6 @@
+let mut:i32:num = 12;
+let mut:i32:buff;
+
+sqr(buff, num);
+
+print("%i32\n", buff);

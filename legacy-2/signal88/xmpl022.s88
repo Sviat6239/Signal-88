@@ -1,0 +1,5 @@
+let mut:i32:num = 13;
+let mut:f64:buff;
+
+arc-ctg(buff, num);
+print("%f64\n", buff);

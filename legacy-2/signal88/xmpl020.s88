@@ -1,0 +1,5 @@
+let mut:f32:num = 11;
+let mut:f64:buff;
+
+arc-cos(buff, num);
+print("%f64\n", buff);

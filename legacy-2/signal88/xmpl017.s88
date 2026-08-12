@@ -1,0 +1,5 @@
+let mut:i32:num = 45;
+let mut:i32:buff;
+
+tan(buff, num);
+print("%i32\n", buff);

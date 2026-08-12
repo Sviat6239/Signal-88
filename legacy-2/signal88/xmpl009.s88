@@ -1,0 +1,25 @@
+let imm:str:title = "Signal-88 feature tour";
+let mut:i32:left = 24;
+let mut:i32:right = 6;
+let mut:char[200]:input;
+let mut:i32:parsed;
+
+print("%str\n", title);
+
+print("Enter a number and press enter:\n>>>");
+read(input);
+
+print("%i32\n", toint(input));
+add(let mut:i32:total; total, left, right);
+if(total == 30){
+    print("Total is 30");
+} else if (total == 29){
+    print("Total is 29");
+} else{
+    print("Total is something else");
+}
+jmp(_finish);
+label: _skiped;
+print("this line is skipped by jmp");
+label: _finish;
+print("demo complete");

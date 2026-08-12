@@ -1,0 +1,7 @@
+let mut:i32:num = 12;
+let imm:i32:POW = 3;
+let mut:i32:buff;
+
+pow(buff, num, POW);
+
+print("%i32", buff);
