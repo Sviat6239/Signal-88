@@ -76,8 +76,10 @@ pub enum TokenKind {
 
     Plus,
     PlusPlus,
+    PlusEqual,
     Minus,
     MinusMinus,
+    MinusEqual,
     Star,
     Slash,
     BackSlash,
@@ -214,8 +216,29 @@ pub fn lex(source: &str) -> Vec<Token> {
                     chars.next();
                     column += 1;
                     rokens.push(Token::new(TokenKind::MinusMinus, line, start_col));
+                } else if chars.peek() == Some(&'='){
+                    chars.next();
+                    column += 1;
+                    rokens.push(Token::new(TokenKind::MinusEqual, line, start_col));
                 } else {
                     tokens.push(Token::new(TokenKind::Minus, line, start_col));
+                }
+            }
+            
+            '+' =>{
+                let start_col = column;
+                chars.next();
+                column += 1;
+                if chars.peek() == Some(&'+'){
+                    chars.next();
+                    column += 1;
+                    rokens.push(Token::new(TokenKind::PlusPlus, line, start_col));
+                } else if chars.peek() == Some(&'='){
+                    chars.next();
+                    column += 1;
+                    rokens.push(Token::new(TokenKind::PlusEqual, line, start_col));
+                } else {
+                    tokens.push(Token::new(TokenKind::Plus, line, start_col));
                 }
             }
 
