@@ -23,8 +23,7 @@ token_types_list = {
     'NUMBER': TokenType("NUMBER", r'-?\d+(\.\d+)?([eE][+-]?\d+)?'),
     'STRING': TokenType("STRING", r'\"[^\"\n]*\"|\'[^\'\n]*\''),
     'CHAR': TokenType("CHAR", r'\'[^\']?\''),  
-    'VARIABLE': TokenType("VARIABLE", r'\b[a-zA-Z_][a-zA-Z0-9_]*\b(?!\s*(?:))'),
-    'TRUE': TokenType("TRUE", r'\btrue\b'), 
+    'VARIABLE': TokenType("VARIABLE", r'\b[a-zA-Z_][a-zA-Z0-9_]*\b(?!\s*(?:true|false|null|if|else|while|for|switch|case|default|break|continue|return|cmp|jmp|jne|je|jle|jl|jge|jg|mov|print|input|func|enum|struct|let|add|sub|div|mul|sin|cos|tan|ctg|arc_sin|arc_cos|arc_tan|arc_ctg|root|pow|sqrt|fact|tetr|log|log10|push|pop|label|toi8|toi16|toi32|toi64|toui8|toui16|toui32|toui64|tof32|tof64|tostr|tobin|tooct|tohex|mut|imm|i8|i16|i32|i64|ui8|ui16|ui32|ui64|f32|f64|char|str|list|array|bool|void|malloc|calloc|realloc|free|memcpy|memmove|memset|memcmp|sizeof)\b)'),    'TRUE': TokenType("TRUE", r'\btrue\b'), 
     'FALSE': TokenType("FALSE", r'\bfalse\b'),
     'NULL': TokenType("NULL", r'\bnull\b'),  
 
