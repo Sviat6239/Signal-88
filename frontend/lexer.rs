@@ -194,7 +194,9 @@ pub fn lex(source: &str) -> Vec<Token> {
             ')' => { tokens.push(Token::new(TokenKind::RParen, line, column)); chars.next(); column += 1; }
             '{' => { tokens.push(Token::new(TokenKind::LBrace, line, column)); chars.next(); column += 1; }
             '}' => { tokens.push(Token::new(TokenKind::RBrace, line, column)); chars.next(); column += 1; }
-
+            '[' => { tokens.push(Token::new(TokenKind::LBracket, line, column)); chars.next(); column += 1; }
+            ']' => { tokens.push(Token::new(TokenKind::RBracket, line, column)); chars.next(); column += 1; }
+            
             '=' => {
                 let start_col = column;
                 chars.next();
@@ -203,6 +205,10 @@ pub fn lex(source: &str) -> Vec<Token> {
                     chars.next();
                     column += 1;
                     tokens.push(Token::new(TokenKind::EqualEqual, line, start_col));
+                } else if chars.peek() == Some(&'>') {
+                    chars.next();
+                    column += 1;
+                    tokens.push(Token::new(TokenKind::Arrow, line, start_col));
                 } else {
                     tokens.push(Token::new(TokenKind::Equal, line, start_col));
                 }
@@ -241,6 +247,24 @@ pub fn lex(source: &str) -> Vec<Token> {
                     tokens.push(Token::new(TokenKind::Plus, line, start_col));
                 }
             }
+
+            '<' =>{
+                let start_col = column;
+                chars.next();
+                column += 1;
+                if chars.peek() == Some(&'<'){
+                    chars.next();
+                    column += 1;
+                    rokens.push(Token::new(TokenKind::LArrowLArrow, line, start_col));
+                } else if chars.peek() == Some(&'='){
+                    chars.next();
+                    column += 1;
+                    rokens.push(Token::new(TokenKind::LessEqual, line, start_col));
+                } else {
+                    tokens.push(Token::new(TokenKind::Less, line, start_col));
+                }
+            }
+            
 
             'a'..='z' | 'A'..='Z' | '_' => {
                 let start_col = column;
