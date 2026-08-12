@@ -101,6 +101,21 @@ token_types_list = {
     'POP': TokenType("POP", r'\bpop\b'),
     'LABEL': TokenType("LABEL", r'\blabel\b'),
 
+    'TOI8': TokenType("TOI8", r'\btoi8\b'),
+    'TOI16': TokenType("TOI16", r'\btoi16\b'),
+    'TOI32': TokenType("TOI32", r'\btoi32\b'),
+    'TOI64': TokenType("TOI64", r'\btoi64\b'),
+    'TOUI8': TokenType("TOUI8", r'\btoui8\b'),
+    'TOUI16': TokenType("TOUI16", r'\btoui16\b'),
+    'TOUI32': TokenType("TOUI32", r'\btoui32\b'),
+    'TOUI64': TokenType("TOUI64", r'\btoui64\b'),
+    'TOF32': TokenType("TOF32", r'\btof32\b'),
+    'TOF64': TokenType("TOF64", r'\btof64\b'),
+    'TOSTR': TokenType("TOSTR", r'\btostr\b'),
+    'TOBIN': TokenType("TOBIN", r'\btobin\b'),
+    'TOOCT': TokenType("TOOCT", r'\btooct\b'),
+    'TOHEX': TokenType("TOHEX", r'\btohex\b'), 
+
     'MUT': TokenType("MUT", r'\bmut\b'),
     'IMM': TokenType("IMM", r'\bimm\b'),
 
