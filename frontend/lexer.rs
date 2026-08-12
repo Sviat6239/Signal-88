@@ -183,7 +183,6 @@ pub fn lex(source: &str) -> Vec<Token> {
                 column = 1;
             }
 
-            '*' => { tokens.push(Token::new(TokenKind::Star, line, column)); chars.next(); column += 1; }
             '/' => { tokens.push(Token::new(TokenKind::Slash, line, column)); chars.next(); column += 1; }
             ';' => { tokens.push(Token::new(TokenKind::Semicolon, line, column)); chars.next(); column += 1; }
             ':' => { tokens.push(Token::new(TokenKind::Colon, line, column)); chars.next(); column += 1; }
@@ -303,6 +302,19 @@ pub fn lex(source: &str) -> Vec<Token> {
                     tokens.push(Token::new(TokenKind::GreaterEqual, line, start_col));
                 } else {
                     tokens.push(Token::new(TokenKind::greater, line, start_col));
+                }
+            }
+
+            '*' => {
+                let start_col = column;
+                chars.next();
+                column += 1;
+                if chars.peek() == Some(&'=') {
+                    chars.next();
+                    column += 1;
+                    tokens.push(Token::new(TokenKind::StarEqual, line, start_col));
+                } else {
+                    tokens.push(Token::new(TokenKind::Star, line, start_col));
                 }
             }
             
