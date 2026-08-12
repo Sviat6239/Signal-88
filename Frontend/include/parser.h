@@ -73,17 +73,21 @@ typedef struct ASTNode {
     struct ASTNode* next;
 } ASTNode;
 
-/* Function declarations */
+/* --- Function declarations --- */
 
-/*
- *   Takes a list of tokens (produced by the lexer) and builds an Abstract Syntax Tree (AST).
- *   The AST represents the hierarchical structure of the program and the order of operations.
- *   Example: "5 + 3" becomes a node of type AST_BINARY_OP with two children nodes (5 and 3).
- */
+/* Symbol table management */
+void init_tables(int initial_capacity);
+void free_tables(void);
+void add_symbol(const char* name, const char* data_type);
+const char* lookup_symbol(const char* name);
+
+/* Parsing entry points and node generators */
 ASTNode* parse(TokenList* tokens);
-
 ASTNode* parse_statement(TokenList* tokens, int* pos);
 ASTNode* parse_expression(TokenList* tokens, int* pos);
+ASTNode* create_node(ASTNodeType type, int value, const char* name, const char* literal_value, const char* data_type, int mutability, ASTNode* left, ASTNode* right);
+
+/* Debugging */
 void print_ast(ASTNode* node, int indent);
 
 #endif
