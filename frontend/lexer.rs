@@ -193,6 +193,12 @@ pub fn lex(source: &str) -> Vec<Token> {
             '}' => { tokens.push(Token::new(TokenKind::RBrace, line, column)); chars.next(); column += 1; }
             '[' => { tokens.push(Token::new(TokenKind::LBracket, line, column)); chars.next(); column += 1; }
             ']' => { tokens.push(Token::new(TokenKind::RBracket, line, column)); chars.next(); column += 1; }
+            '&' => { tokens.push(Token::new(TokenKind::Ampersand, line, column)); chars.next(); column += 1; }           
+            '#' => { tokens.push(Token::new(TokenKind::Hash, line, column)); chars.next(); column += 1; }
+            '~' => { tokens.push(Token::new(TokenKind::Tilde, line, column)); chars.next(); column += 1; }
+            '@' => { tokens.push(Token::new(TokenKind::At, line, column)); chars.next(); column += 1; }
+            ',' => { tokens.push(Token::new(TokenKind::Comma, line, column)); chars.next(); column += 1; }
+            '_' => { tokens.push(Token::new(TokenKind::Underscore, line, column)); chars.next(); column += 1; }
             
             '=' => {
                 let start_col = column;
