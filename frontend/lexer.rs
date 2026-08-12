@@ -265,6 +265,23 @@ pub fn lex(source: &str) -> Vec<Token> {
                 }
             }
             
+            '>' =>{
+                let start_col = column;
+                chars.next();
+                column += 1;
+                if chars.peek() == Some(&'>'){
+                    chars.next();
+                    column += 1;
+                    rokens.push(Token::new(TokenKind::RArrowRArrow, line, start_col));
+                } else if chars.peek() == Some(&'='){
+                    chars.next();
+                    column += 1;
+                    rokens.push(Token::new(TokenKind::GreaterEqual, line, start_col));
+                } else {
+                    tokens.push(Token::new(TokenKind::greater, line, start_col));
+                }
+            }
+            
 
             'a'..='z' | 'A'..='Z' | '_' => {
                 let start_col = column;
