@@ -96,23 +96,23 @@ class Lexer:
         TokenSpec("TOOCT", token_types_list["TOOCT"], r"\btooct\b", TokenCategory.KEYWORD),  # Cast to octal string representation
         TokenSpec("TOHEX", token_types_list["TOHEX"], r"\btohex\b", TokenCategory.KEYWORD),  # Cast to hexadecimal string representation
 
-        TokenSpec("MUT", token_types_list["MUT"], r"mut\b", TokenCategory.TYPE),
-        TokenSpec("IMM", token_types_list["IMM"], r"imm\b", TokenCategory.TYPE),
-        TokenSpec("I8", token_types_list["I8"], r"i8\b", TokenCategory.TYPE),
-        TokenSpec("I16", token_types_list["I16"], r"i16\b", TokenCategory.TYPE),
-        TokenSpec("I32", token_types_list["I32"], r"i32\b", TokenCategory.TYPE),
-        TokenSpec("I64", token_types_list["I64"], r"i64\b", TokenCategory.TYPE),
-        TokenSpec("UI8", token_types_list["UI8"], r"ui8\b", TokenCategory.TYPE),
-        TokenSpec("UI16", token_types_list["UI16"], r"ui16\b", TokenCategory.TYPE),
-        TokenSpec("UI32", token_types_list["UI32"], r"ui32\b", TokenCategory.TYPE),
-        TokenSpec("UI64", token_types_list["UI64"], r"ui64\b", TokenCategory.TYPE),
-        TokenSpec("F32", token_types_list["F32"], r"f32\b", TokenCategory.TYPE),
-        TokenSpec("F64", token_types_list["F64"], r"f64\b", TokenCategory.TYPE),
-        TokenSpec("CHAR", token_types_list["CHAR"], r"char\b", TokenCategory.TYPE),
-        TokenSpec("STRING", token_types_list["STRING"], r"str\b", TokenCategory.TYPE),
-        TokenSpec("LIST", token_types_list["LIST"], r"list\b", TokenCategory.TYPE),
-        TokenSpec("ARRAY", token_types_list["ARRAY"], r"array\b", TokenCategory.TYPE),
-        TokenSpec("BOOL", token_types_list["BOOL"], r"bool\b", TokenCategory.TYPE),
-        TokenSpec("NULL", token_types_list["NULL"], r"null\b", TokenCategory.TYPE),
-        TokenSpec("VOID", token_types_list["VOID"], r"void\b", TokenCategory.TYPE),
+        TokenSpec("MUT", token_types_list["MUT"], r"mut\b", TokenCategory.TYPE),  # Mutable variable specifier
+        TokenSpec("IMM", token_types_list["IMM"], r"imm\b", TokenCategory.TYPE),  # Immutable variable specifier
+        TokenSpec("I8", token_types_list["I8"], r"i8\b", TokenCategory.TYPE),  # 8-bit signed integer type
+        TokenSpec("I16", token_types_list["I16"], r"i16\b", TokenCategory.TYPE),  # 16-bit signed integer type
+        TokenSpec("I32", token_types_list["I32"], r"i32\b", TokenCategory.TYPE),  # 32-bit signed integer type
+        TokenSpec("I64", token_types_list["I64"], r"i64\b", TokenCategory.TYPE),  # 64-bit signed integer type
+        TokenSpec("UI8", token_types_list["UI8"], r"ui8\b", TokenCategory.TYPE),  # 8-bit unsigned integer type
+        TokenSpec("UI16", token_types_list["UI16"], r"ui16\b", TokenCategory.TYPE),  # 16-bit unsigned integer type
+        TokenSpec("UI32", token_types_list["UI32"], r"ui32\b", TokenCategory.TYPE),  # 32-bit unsigned integer type
+        TokenSpec("UI64", token_types_list["UI64"], r"ui64\b", TokenCategory.TYPE),  # 64-bit unsigned integer type
+        TokenSpec("F32", token_types_list["F32"], r"f32\b", TokenCategory.TYPE),  # 32-bit floating-point type
+        TokenSpec("F64", token_types_list["F64"], r"f64\b", TokenCategory.TYPE),  # 64-bit floating-point type
+        TokenSpec("CHAR", token_types_list["CHAR"], r"char\b", TokenCategory.TYPE),  # Character type
+        TokenSpec("STRING", token_types_list["STRING"], r"str\b", TokenCategory.TYPE),  # String type
+        TokenSpec("LIST", token_types_list["LIST"], r"list\b", TokenCategory.TYPE),  # Dynamic list type
+        TokenSpec("ARRAY", token_types_list["ARRAY"], r"array\b", TokenCategory.TYPE),  # Fixed-size array type
+        TokenSpec("BOOL", token_types_list["BOOL"], r"bool\b", TokenCategory.TYPE),  # Boolean type
+        TokenSpec("NULL", token_types_list["NULL"], r"null\b", TokenCategory.TYPE),  # Null/empty value type
+        TokenSpec("VOID", token_types_list["VOID"], r"void\b", TokenCategory.TYPE),  # Void / no-return type
     ]
