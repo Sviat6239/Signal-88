@@ -15,3 +15,14 @@ class NumberNode(ExpressionNode):
 
     def __repr__(self):
         return f"NumberNode(value={self.value}, line={self.line}, col={self.column})"
+
+class StringNode(ExpressionNode):
+    def __init__(self, token: Token):
+        super().__init__(token.line, token.column)
+        self.token = token
+        self.value = token.value[1:-1]
+        if not self.value and token.value not in ('""', ''):
+            raise ValueError(f"Invalid string literal at line {self.line}, col {self.column}: {token.value}")
+
+    def __repr__(self):
+        return f"StringNode(value={self.value!r}, line={self.line}, col={self.column})"
