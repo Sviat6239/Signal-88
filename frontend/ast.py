@@ -35,4 +35,12 @@ class CharNode(ExpressionNode):
 
     def __repr__(self):
         return f"CharNode(value={self.value!r}, line={self.line}, col={self.column})"
-        
+
+class BooleanNode(ExpressionNode):
+    def __init__(self, token: Token):
+        super().__init__(token.line, token.column)
+        self.token = token
+        self.value = token.value
+
+    def __repr__(self):
+        return f"BooleanNode(value={self.value}, line={self.line}, col={self.column})"
