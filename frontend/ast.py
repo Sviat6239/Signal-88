@@ -26,3 +26,13 @@ class StringNode(ExpressionNode):
 
     def __repr__(self):
         return f"StringNode(value={self.value!r}, line={self.line}, col={self.column})"
+
+class CharNode(ExpressionNode):
+    def __init__(self, token: Token):
+        super().__init__(token.line, token.column)
+        self.token = token
+        self.value = token.value[1:-1]
+
+    def __repr__(self):
+        return f"CharNode(value={self.value!r}, line={self.line}, col={self.column})"
+        
