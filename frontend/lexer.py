@@ -115,4 +115,15 @@ class Lexer:
         TokenSpec("BOOL", token_types_list["BOOL"], r"bool\b", TokenCategory.TYPE),  # Boolean type
         TokenSpec("NULL", token_types_list["NULL"], r"null\b", TokenCategory.TYPE),  # Null/empty value type
         TokenSpec("VOID", token_types_list["VOID"], r"void\b", TokenCategory.TYPE),  # Void / no-return type
+
+        # Memory Management & Low-level Operations
+        TokenSpec("MALLOC", token_types_list["MALLOC"], r"\bmalloc\b", TokenCategory.KEYWORD),  # Allocate memory
+        TokenSpec("CALLOC", token_types_list["CALLOC"], r"\bcalloc\b", TokenCategory.KEYWORD),  # Allocate and zero-initialize memory
+        TokenSpec("REALLOC", token_types_list["REALLOC"], r"\brealloc\b", TokenCategory.KEYWORD),  # Reallocate memory block
+        TokenSpec("FREE", token_types_list["FREE"], r"\bfree\b", TokenCategory.KEYWORD),  # Free allocated memory
+        TokenSpec("MEMCPY", token_types_list["MEMCPY"], r"\bmemcpy\b", TokenCategory.KEYWORD),  # Memory copy
+        TokenSpec("MEMMOVE", token_types_list["MEMMOVE"], r"\bmemmove\b", TokenCategory.KEYWORD),  # Memory move (safe for overlapping memory)
+        TokenSpec("MEMSET", token_types_list["MEMSET"], r"\bmemset\b", TokenCategory.KEYWORD),  # Fill memory with constant byte
+        TokenSpec("MEMCMP", token_types_list["MEMCMP"], r"\bmemcmp\b", TokenCategory.KEYWORD),  # Compare memory blocks
+        TokenSpec("SIZEOF", token_types_list["SIZEOF"], r"\bsizeof\b", TokenCategory.KEYWORD),  # Size of data type or structure in bytes
     ]
