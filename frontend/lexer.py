@@ -80,6 +80,22 @@ class Lexer:
         TokenSpec("POP", token_types_list["POP"], r"pop\b", TokenCategory.KEYWORD),
         TokenSpec("LABEL", token_types_list["LABEL"], r"label\b", TokenCategory.KEYWORD),
 
+        # Type Casts / Conversions
+        TokenSpec("TOI8", token_types_list["TOI8"], r"\btoi8\b", TokenCategory.KEYWORD),  # Cast to 8-bit signed integer
+        TokenSpec("TOI16", token_types_list["TOI16"], r"\btoi16\b", TokenCategory.KEYWORD),  # Cast to 16-bit signed integer
+        TokenSpec("TOI32", token_types_list["TOI32"], r"\btoi32\b", TokenCategory.KEYWORD),  # Cast to 32-bit signed integer
+        TokenSpec("TOI64", token_types_list["TOI64"], r"\btoi64\b", TokenCategory.KEYWORD),  # Cast to 64-bit signed integer
+        TokenSpec("TOUI8", token_types_list["TOUI8"], r"\btoui8\b", TokenCategory.KEYWORD),  # Cast to 8-bit unsigned integer
+        TokenSpec("TOUI16", token_types_list["TOUI16"], r"\btoui16\b", TokenCategory.KEYWORD),  # Cast to 16-bit unsigned integer
+        TokenSpec("TOUI32", token_types_list["TOUI32"], r"\btoui32\b", TokenCategory.KEYWORD),  # Cast to 32-bit unsigned integer
+        TokenSpec("TOUI64", token_types_list["TOUI64"], r"\btoui64\b", TokenCategory.KEYWORD),  # Cast to 64-bit unsigned integer
+        TokenSpec("TOF32", token_types_list["TOF32"], r"\btof32\b", TokenCategory.KEYWORD),  # Cast to 32-bit float
+        TokenSpec("TOF64", token_types_list["TOF64"], r"\btof64\b", TokenCategory.KEYWORD),  # Cast to 64-bit float
+        TokenSpec("TOSTR", token_types_list["TOSTR"], r"\btostr\b", TokenCategory.KEYWORD),  # Cast to string
+        TokenSpec("TOBIN", token_types_list["TOBIN"], r"\btobin\b", TokenCategory.KEYWORD),  # Cast to binary string representation
+        TokenSpec("TOOCT", token_types_list["TOOCT"], r"\btooct\b", TokenCategory.KEYWORD),  # Cast to octal string representation
+        TokenSpec("TOHEX", token_types_list["TOHEX"], r"\btohex\b", TokenCategory.KEYWORD),  # Cast to hexadecimal string representation
+
         TokenSpec("MUT", token_types_list["MUT"], r"mut\b", TokenCategory.TYPE),
         TokenSpec("IMM", token_types_list["IMM"], r"imm\b", TokenCategory.TYPE),
         TokenSpec("I8", token_types_list["I8"], r"i8\b", TokenCategory.TYPE),
