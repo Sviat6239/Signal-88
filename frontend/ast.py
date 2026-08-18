@@ -73,3 +73,13 @@ class BinaryOperationNode(ExpressionNode):
 
     def __repr__(self):
         return f"BinaryOperationNode({self.operator}, {self.left_node}, {self.right_node}, line={self.line}, col={self.column})"
+
+class NullCoalesceNode(ExpressionNode):
+    def __init__(self, left_node: ExpressionNode, right_node: ExpressionNode):
+        super().__init__(left_node.line, left_node.column)
+        self.left_node = left_node
+        self.right_node = right_node
+
+    def __repr__(self):
+        return f"NullCoalesceNode({self.left_node}, {self.right_node}, line={self.line}, col={self.column})"
+
