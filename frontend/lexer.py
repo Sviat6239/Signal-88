@@ -126,4 +126,16 @@ class Lexer:
         TokenSpec("MEMSET", token_types_list["MEMSET"], r"\bmemset\b", TokenCategory.KEYWORD),  # Fill memory with constant byte
         TokenSpec("MEMCMP", token_types_list["MEMCMP"], r"\bmemcmp\b", TokenCategory.KEYWORD),  # Compare memory blocks
         TokenSpec("SIZEOF", token_types_list["SIZEOF"], r"\bsizeof\b", TokenCategory.KEYWORD),  # Size of data type or structure in bytes
+
+        TokenSpec("NUMBER", token_types_list["NUMBER"], r"\d+(\.\d+)?([eE][+-]?\d+)?", TokenCategory.LITERAL),
+        TokenSpec("STRING", token_types_list["STRING"], r"\"[^\"]*\"", TokenCategory.LITERAL),
+        TokenSpec("CHAR", token_types_list["CHAR"], r"'[^']'", TokenCategory.LITERAL),
+        TokenSpec("TRUE", token_types_list["TRUE"], r"true\b", TokenCategory.LITERAL),
+        TokenSpec("FALSE", token_types_list["FALSE"], r"false\b", TokenCategory.LITERAL),
+        TokenSpec("NULL", token_types_list["NULL"], r"null\b", TokenCategory.LITERAL),
+
+        TokenSpec("SPACE", token_types_list["SPACE"], r"[ \t\r\n]+", TokenCategory.WHITESPACE, skip=True),
+        TokenSpec("COMMENT", token_types_list["COMMENT"], r"#.*?$|/\*[\s\S]*?\*/", TokenCategory.COMMENT, skip=True),
+
+        TokenSpec("VARIABLE", token_types_list["VARIABLE"], r"[a-zA-Z_][a-zA-Z0-9_]*", TokenCategory.IDENTIFIER),
     ]
