@@ -102,3 +102,16 @@ class AssignNode(ExpressionNode):
 
     def __repr__(self):
         return f"AssignNode({self.token}, {self.variable}, {self.expression}, line={self.line}, col={self.column})"
+
+class VarDeclarationNode(ExpressionNode):
+    def __init__(self, var_token: Token, mutability: Token, variable: VariableNode, type_token: Optional[Token], expr: Optional[ExpressionNode], modifiers: List[Token] = None):
+        super().__init__(var_token.line, var_token.column)
+        self.var_token = var_token
+        self.mutability = mutability
+        self.variable = variable
+        self.type_token = type_token
+        self.expr = expr
+        self.modifiers = modifiers or []
+
+    def __repr__(self):
+        return f"VarDeclarationNode({self.var_token}, {self.mutability}, {self.variable}, {self.type_token}, {self.expr}, modifiers={self.modifiers}, line={self.line}, col={self.column})"
