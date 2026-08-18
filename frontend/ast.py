@@ -203,3 +203,17 @@ class BlockNode(ExpressionNode):
 
     def __repr__(self):
         return f"BlockNode({self.statements}, line={self.line}, col={self.column})"
+
+class StatementsNode(ExpressionNode):
+    def __init__(self, line: int = 1, column: int = 1):
+        super().__init__(line, column)
+        self.code_strings: List[ExpressionNode] = []
+
+    def add_node(self, node: ExpressionNode):
+        self.code_strings.append(node)
+        if self.line == 1 and self.column == 1 and hasattr(node, 'line') and hasattr(node, 'column'):
+            self.line = node.line
+            self.column = node.column
+
+    def __repr__(self):
+        return f"StatementsNode({self.code_strings}, line={self.line}, col={self.column})"
