@@ -186,3 +186,12 @@ class PrintNode(ExpressionNode):
 
     def __repr__(self):
         return f"PrintNode({self.expression}, line={self.line}, col={self.column})"
+
+class InputNode(ExpressionNode):
+    def __init__(self, token: Token, prompt: Optional[ExpressionNode] = None):
+        super().__init__(token.line, token.column)
+        self.token = token
+        self.prompt = prompt
+
+    def __repr__(self):
+        return f"InputNode(token={self.token}, prompt={self.prompt}, line={self.line}, col={self.column})"
