@@ -155,3 +155,12 @@ class SwitchNode(ExpressionNode):
 
     def __repr__(self):
         return f"SwitchNode({self.expression}, {self.cases}, {self.default}, line={self.line}, col={self.column})"
+
+class CaseNode(ExpressionNode):
+    def __init__(self, value: ExpressionNode, body: ExpressionNode):
+        super().__init__(value.line, value.column)
+        self.value = value
+        self.body = body
+
+    def __repr__(self):
+        return f"CaseNode({self.value}, {self.body}, line={self.line}, col={self.column})"
