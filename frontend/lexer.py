@@ -139,3 +139,16 @@ class Lexer:
 
         TokenSpec("VARIABLE", token_types_list["VARIABLE"], r"[a-zA-Z_][a-zA-Z0-9_]*", TokenCategory.IDENTIFIER),
     ]
+
+    def __init__(self, code: str, filename: str, debug: bool = False):
+        self.code = code.rstring() + "\n"
+        self.filename = filename
+        self.pos = 0
+        self.line = 1
+        self.column = 1
+        self.token_list: List[Token] = []
+        self.debug = debug
+        self.compiled_patterns: List[Tuple[TokenSpec, Pattern]] = [
+            (spec, re.compile(r'^' + spec.regex, re.MULTILINE))
+            for spec in self.TOKEN_SPECS
+        ]
