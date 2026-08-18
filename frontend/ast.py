@@ -93,3 +93,12 @@ class VariableNode(ExpressionNode):
     def __repr__(self):
         return f"VariableNode(value={self.variable.value}, line={self.line}, col={self.column})"
 
+class AssignNode(ExpressionNode):
+    def __init__(self, token: Token, variable: VariableNode, expression: ExpressionNode):
+        super().__init__(token.line, token.column)
+        self.token = token
+        self.variable = variable
+        self.expression = expression
+
+    def __repr__(self):
+        return f"AssignNode({self.token}, {self.variable}, {self.expression}, line={self.line}, col={self.column})"
