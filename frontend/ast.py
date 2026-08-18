@@ -115,3 +115,13 @@ class VarDeclarationNode(ExpressionNode):
 
     def __repr__(self):
         return f"VarDeclarationNode({self.var_token}, {self.mutability}, {self.variable}, {self.type_token}, {self.expr}, modifiers={self.modifiers}, line={self.line}, col={self.column})"
+
+class IfNode(ExpressionNode):
+    def __init__(self, condition: ExpressionNode, then_branch: 'BlockNode', else_branch: Optional['BlockNode']):
+        super().__init__(condition.line, condition.column)
+        self.condition = condition
+        self.then_branch = then_branch
+        self.else_branch = else_branch
+
+    def __repr__(self):
+        return f"IfNode({self.condition}, {self.then_branch}, {self.else_branch}, line={self.line}, col={self.column})"
