@@ -205,3 +205,37 @@ class Lexer:
 
     def _is_skipped_token(self, token: Token) -> bool:
         return any(spec.skip and spec.name == token.type.name for spec in self.TOKEN_SPECS)
+
+    def validate_tokens(self) -> None:
+        for tokens in self.token_list:
+            if token.type.name == "STRING":
+                if not token.value.startswith('"') or not token.value.endswith('"'):
+                    raise LexerError(format_error(
+                        "SyntaxError",
+                        f"Unclosed or malformed string literal: {token.value}",
+                        self.filename,
+                        self.code,
+                        token.line,
+                        token.column,
+                        token_length=len(token.value)
+                    ))
+            if token.type.name == "CHAR" and len(token.value) != 3:
+                raise LexerError(format_error(
+                    "SyntaxError",
+                    "Invalid character literal",
+                    self.filename,
+                    self.code,
+                    token.line,
+                    token.column,
+                    token_length=len(token.value)
+                ))
+            if token.type.name == "VARIABLE" and not token.value.strip():
+                raise LexerError(format_error(
+                    "SyntaxError",
+                    "Empty variable identifier",
+                    self.filename,
+                    self.code,
+                    token.line,
+                    token.column,
+                    token_length=1
+                ))
