@@ -163,4 +163,15 @@ class Lexer:
                 self.column += len(line)
         self.pos += len(value)
 
-    
+    def lex_analysis(self) -> List[Token]:
+        try:
+            with open('tokens.log', 'w', encoding='utf-8') as f:
+                while self.next_token():
+                    token = self.token_list[-1]
+                    f.write(f"Token: type={token.type.name}, value={token.value!r}, line={token.line}, column={token.column}\n")
+                self.token_list.append(Token(token_types_list["EOF"], "", self.pos, self.line, self.column))
+                f.write(f"Token: type=EOF, value='', line={self.line}, column={self.column}\n")
+            self.validate_tokens()
+            return [token for token in self.token_list if not self._is_skipped_token(token)]
+        except LexerError as e:
+            raise SyntaxError(str(e)) from e
