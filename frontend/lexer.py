@@ -239,3 +239,13 @@ class Lexer:
                     token.column,
                     token_length=1
                 ))
+
+    @classmethod
+    def add_token_type(cls, name: str, regex: str, category: TokenCategory, skip: bool = False) -> None:
+        if name in token_types_list:
+            raise ValueError(f"Token type '{name}' already exists")
+        token_type = TokenType(name, regex)
+        token_types_list[name] = token_type
+        token_types[name] = regex
+        cls.TOKEN_SPECS.append(TokenSpec(name, token_type, regex, category, skip))
+        cls.TOKEN_SPECS.sort(key=lambda spec: (-len(spec.regex), spec.name))
