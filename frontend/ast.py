@@ -178,3 +178,11 @@ class ContinueNode(ExpressionNode):
 
     def __repr__(self):
         return f"ContinueNode(line={self.line}, col={self.column})"
+
+class PrintNode(ExpressionNode):
+    def __init__(self, expression: ExpressionNode):
+        super().__init__(expression.line, expression.column)
+        self.expression = expression
+
+    def __repr__(self):
+        return f"PrintNode({self.expression}, line={self.line}, col={self.column})"
