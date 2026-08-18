@@ -53,3 +53,13 @@ class NullNode(ExpressionNode):
 
     def __repr__(self):
         return f"NullNode(value={self.value}, line={self.line}, col={self.column})"
+
+class UnaryOperationNode(ExpressionNode):
+    def __init__(self, operator: Token, operand: ExpressionNode, is_postfix: bool = False):
+        super().__init__(operator.line, operator.column)
+        self.operator = operator
+        self.operand = operand
+        self.is_postfix = is_postfix
+
+    def __repr__(self):
+        return f"UnaryOperationNode(operator={self.operator}, operand={self.operand}, is_postfix={self.is_postfix}, line={self.line}, col={self.column})"
