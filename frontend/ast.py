@@ -63,3 +63,13 @@ class UnaryOperationNode(ExpressionNode):
 
     def __repr__(self):
         return f"UnaryOperationNode(operator={self.operator}, operand={self.operand}, is_postfix={self.is_postfix}, line={self.line}, col={self.column})"
+
+class BinaryOperationNode(ExpressionNode):
+    def __init__(self, operator: Token, left_node: ExpressionNode, right_node: ExpressionNode):
+        super().__init__(operator.line, operator.column)
+        self.operator = operator
+        self.left_node = left_node
+        self.right_node = right_node
+
+    def __repr__(self):
+        return f"BinaryOperationNode({self.operator}, {self.left_node}, {self.right_node}, line={self.line}, col={self.column})"
