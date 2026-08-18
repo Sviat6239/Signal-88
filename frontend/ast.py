@@ -219,11 +219,15 @@ class StatementsNode(ExpressionNode):
         return f"StatementsNode({self.code_strings}, line={self.line}, col={self.column})"
 
 class ProgramNode(ExpressionNode):
-    def __init__(self, imports: List['ImportNode'], statements: List[ExpressionNode]):
-        super().__init__(imports[0].line if imports else statements[0].line if statements else 1,
-                        imports[0].column if imports else statements[0].column if statements else 1)
+    def __init__(self, statements: List[ExpressionNode], imports: List['ImportNode'] = None):
+        imports = imports or []
+        
+        line = imports[0].line if imports else (statements[0].line if statements else 1)
+        column = imports[0].column if imports else (statements[0].column if statements else 1)
+        
+        super().__init__(line, column)
         self.imports = imports
         self.statements = statements
 
     def __repr__(self):
-        return f"ProgramNode({self.imports}, {self.statements}, line={self.line}, col={self.column})"
+        return f"ProgramNode(statements={self.statements}, line={self.line}, col={self.column})"
