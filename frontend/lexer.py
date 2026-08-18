@@ -152,3 +152,15 @@ class Lexer:
             (spec, re.compile(r'^' + spec.regex, re.MULTILINE))
             for spec in self.TOKEN_SPECS
         ]
+
+    def update_position(self, value: str) -> None:
+        lines = value.split('\n')
+        for i, line in enumerate(lines):
+            if i < len(lines) - 1:
+                self.line += 1
+                self.column = 1
+            else:
+                self.column += len(line)
+        self.pos += len(value)
+
+    
