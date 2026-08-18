@@ -125,3 +125,12 @@ class IfNode(ExpressionNode):
 
     def __repr__(self):
         return f"IfNode({self.condition}, {self.then_branch}, {self.else_branch}, line={self.line}, col={self.column})"
+
+class WhileNode(ExpressionNode):
+    def __init__(self, condition: ExpressionNode, body: 'BlockNode'):
+        super().__init__(condition.line, condition.column)
+        self.condition = condition
+        self.body = body
+
+    def __repr__(self):
+        return f"WhileNode({self.condition}, {self.body}, line={self.line}, col={self.column})"
