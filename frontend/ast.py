@@ -145,3 +145,13 @@ class ForNode(ExpressionNode):
 
     def __repr__(self):
         return f"ForNode({self.init}, {self.cond}, {self.step}, {self.body}, line={self.line}, col={self.column})"
+
+class SwitchNode(ExpressionNode):
+    def __init__(self, expression: ExpressionNode, cases: List['CaseNode'], default: Optional['BlockNode']):
+        super().__init__(expression.line, expression.column)
+        self.expression = expression
+        self.cases = cases
+        self.default = default
+
+    def __repr__(self):
+        return f"SwitchNode({self.expression}, {self.cases}, {self.default}, line={self.line}, col={self.column})"
