@@ -175,3 +175,30 @@ class Lexer:
             return [token for token in self.token_list if not self._is_skipped_token(token)]
         except LexerError as e:
             raise SyntaxError(str(e)) from e
+
+    def next_token(self) -> bool:
+        if self.pos >= len(self.code):
+            return False
+
+        substring = self.code[self.pos:]
+        for spec, patter in self.compiled_patterns:
+            match = pattern.match(substring)
+            if match:
+                value = match.group(0)
+                token = Token(spec.token_type, value, self.pos, self.line, self.column)
+                self.token_list.append(token)
+                if self.debug:
+                    logger.info(f"Token created: {spec.name}('{value}') at {self.line}:{self.column}")
+                self.update_position(value)
+                return True
+            
+            char = self.code[self.pos]
+            raise LexerError(format_error(
+                "SyntaxError",
+                f"Unexpected character '{char}'",
+                self.filename,
+                self.code,
+                self.line,
+                self.column,
+                token_length=1
+            ))
