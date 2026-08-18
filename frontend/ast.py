@@ -134,3 +134,14 @@ class WhileNode(ExpressionNode):
 
     def __repr__(self):
         return f"WhileNode({self.condition}, {self.body}, line={self.line}, col={self.column})"
+
+class ForNode(ExpressionNode):
+    def __init__(self, init: Optional[ExpressionNode], cond: Optional[ExpressionNode], step: Optional[ExpressionNode], body: 'BlockNode'):
+        super().__init__(init.line if init else body.line, init.column if init else body.column)
+        self.init = init
+        self.cond = cond
+        self.step = step
+        self.body = body
+
+    def __repr__(self):
+        return f"ForNode({self.init}, {self.cond}, {self.step}, {self.body}, line={self.line}, col={self.column})"
