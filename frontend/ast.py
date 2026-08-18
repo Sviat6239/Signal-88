@@ -164,3 +164,17 @@ class CaseNode(ExpressionNode):
 
     def __repr__(self):
         return f"CaseNode({self.value}, {self.body}, line={self.line}, col={self.column})"
+
+class BreakNode(ExpressionNode):
+    def __init__(self, line: int = 1, column: int = 1):
+        super().__init__(line, column)
+
+    def __repr__(self):
+        return f"BreakNode(line={self.line}, col={self.column})"
+
+class ContinueNode(ExpressionNode):
+    def __init__(self, line: int = 1, column: int = 1):
+        super().__init__(line, column)
+
+    def __repr__(self):
+        return f"ContinueNode(line={self.line}, col={self.column})"
