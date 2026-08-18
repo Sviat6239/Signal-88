@@ -44,3 +44,12 @@ class BooleanNode(ExpressionNode):
 
     def __repr__(self):
         return f"BooleanNode(value={self.value}, line={self.line}, col={self.column})"
+
+class NullNode(ExpressionNode):
+    def __init__(self, token: Token):
+        super().__init__(token.line, token.column)
+        self.token = token
+        self.value = token.value
+
+    def __repr__(self):
+        return f"NullNode(value={self.value}, line={self.line}, col={self.column})"
