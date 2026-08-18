@@ -202,3 +202,6 @@ class Lexer:
                 self.column,
                 token_length=1
             ))
+
+    def _is_skipped_token(self, token: Token) -> bool:
+        return any(spec.skip and spec.name == token.type.name for spec in self.TOKEN_SPECS)
