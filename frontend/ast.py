@@ -83,3 +83,13 @@ class NullCoalesceNode(ExpressionNode):
     def __repr__(self):
         return f"NullCoalesceNode({self.left_node}, {self.right_node}, line={self.line}, col={self.column})"
 
+class VariableNode(ExpressionNode):
+    def __init__(self, variable: Token):
+        super().__init__(variable.line, variable.column)
+        self.variable = variable
+        if not variable.value.strip():
+            raise ValueError(f"Empty variable identifier at line {self.line}, col {self.column}")
+
+    def __repr__(self):
+        return f"VariableNode(value={self.variable.value}, line={self.line}, col={self.column})"
+
