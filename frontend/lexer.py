@@ -50,6 +50,10 @@ class Lexer:
         TokenSpec("JL", token_types_list["JL"], r"jl\b", TokenCategory.KEYWORD),  # Jump if less instruction
         TokenSpec("JGE", token_types_list["JGE"], r"jge\b", TokenCategory.KEYWORD),  # Jump if greater or equal instruction
         TokenSpec("JG", token_types_list["JG"], r"jg\b", TokenCategory.KEYWORD),  # Jump if greater instruction
+        TokenSpec("JA", token_types_list["JA"], r"ja\b", TokenCategory.KEYWORD),  # Jump if above instruction
+        TokenSpec("JAE", token_types_list["JAE"], r"jae\b", TokenCategory.KEYWORD),  # Jump if above or equal instruction
+        TokenSpec("JB", token_types_list["JB"], r"jb\b", TokenCategory.KEYWORD),  # Jump if below instruction
+        TokenSpec("JBE", token_types_list["JBE"], r"jbe\b", TokenCategory.KEYWORD),  # Jump if below or equal instruction
         TokenSpec("MOV", token_types_list["MOV"], r"mov\b", TokenCategory.KEYWORD),  # Move/assign value instruction
         TokenSpec("PRINT", token_types_list["PRINT"], r"print\b", TokenCategory.KEYWORD),  # Output to standard console statement
         TokenSpec("INPUT", token_types_list["INPUT"], r"input\b", TokenCategory.KEYWORD),  # Read from standard input statement
