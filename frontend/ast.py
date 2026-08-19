@@ -278,6 +278,14 @@ class JaeNode(ExpressionNode):
     def __repr__(self):
         return f"JaeNode(target={self.target}, line={self.line}, col={self.column})"
 
+class JbNode(ExpressionNode):
+    def __init__(self, target: ExpressionNode):
+        super().__init__(token.line, token.column)
+        self.target = target
+
+    def __repr__(self):
+        return f"JbNode(target={self.target}, line={self.line}, col={self.column})"
+
 class MovNode(ExpressionNode):
     def __init__(self, target: ExpressionNode, source: ExpressionNode):
         super().__init__(token.line, token.column)
