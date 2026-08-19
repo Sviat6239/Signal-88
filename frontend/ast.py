@@ -311,7 +311,7 @@ class AddNode(ExpressionNode):
         self.operandB = operandB
 
     def __repr__(self):
-        return f"AddNode(target={self.target}, operandA={self.operandA}, operandB={self.operandB} line={self.line}, col={self.column})"
+        return f"AddNode(target={self.target}, operandA={self.operandA}, operandB={self.operandB}, line={self.line}, col={self.column})"
 
 class SubNode(ExpressionNode):
     def __init__(self, target: ExpressionNode, operandA: ExpressionNode, operandB: ExpressionNode):
@@ -321,7 +321,7 @@ class SubNode(ExpressionNode):
         self.operandB = operandB
 
     def __repr__(self):
-        return f"SubNode(target={self.target}, operandA={self.operandA}, operandB={self.operandB} line={self.line}, col={self.column})"
+        return f"SubNode(target={self.target}, operandA={self.operandA}, operandB={self.operandB}, line={self.line}, col={self.column})"
 
 class MulNode(ExpressionNode):
     def __init__(self, target: ExpressionNode, operandA: ExpressionNode, operandB: ExpressionNode):
@@ -331,7 +331,7 @@ class MulNode(ExpressionNode):
         self.operandB = operandB
 
     def __repr__(self):
-        return f"MulNode(target={self.target}, operandA={self.operandA}, operandB={self.operandB} line={self.line}, col={self.column})"
+        return f"MulNode(target={self.target}, operandA={self.operandA}, operandB={self.operandB}, line={self.line}, col={self.column})"
       
 class DivNode(ExpressionNode):
     def __init__(self, target: ExpressionNode, operandA: ExpressionNode, operandB: ExpressionNode):
@@ -341,8 +341,16 @@ class DivNode(ExpressionNode):
         self.operandB = operandB
 
     def __repr__(self):
-        return f"DivNode(target={self.target}, operandA={self.operandA}, operandB={self.operandB} line={self.line}, col={self.column})"
-      
+        return f"DivNode(target={self.target}, operandA={self.operandA}, operandB={self.operandB}, line={self.line}, col={self.column})"
+
+class SinNode(ExpressionNode):
+    def __init__(self, target: ExpressionNode, operand: ExpressionNode):
+        super().__init__(token.line, token.column)
+        self.target = target
+        self.operand = operand
+
+    def __repr__(self):
+        return f"SinNode(target={self.target}, operand={self.operand}, line={self.line}, col={self.column})"     
 
 class BlockNode(ExpressionNode):
     def __init__(self, statements: List[ExpressionNode], line: int = 1, column: int = 1):
