@@ -333,6 +333,16 @@ class MulNode(ExpressionNode):
     def __repr__(self):
         return f"MulNode(target={self.target}, operandA={self.operandA}, operandB={self.operandB} line={self.line}, col={self.column})"
       
+class DivNode(ExpressionNode):
+    def __init__(self, target: ExpressionNode, operandA: ExpressionNode, operandB: ExpressionNode):
+        super().__init__(token.line, token.column)
+        self.target = target
+        self.operandA = operandA
+        self.operandB = operandB
+
+    def __repr__(self):
+        return f"DivNode(target={self.target}, operandA={self.operandA}, operandB={self.operandB} line={self.line}, col={self.column})"
+      
 
 class BlockNode(ExpressionNode):
     def __init__(self, statements: List[ExpressionNode], line: int = 1, column: int = 1):
