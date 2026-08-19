@@ -86,6 +86,10 @@ token_types_list = {
     "JL": TokenType("JL", r"\bjl\b"),  # Jump if less
     "JGE": TokenType("JGE", r"\bjge\b"),  # Jump if greater or equal
     "JG": TokenType("JG", r"\bjg\b"),  # Jump if greater
+    "JA": TokenType("JA", r"\bja\b"),  # Jump if above
+    "JAE": TokenType("JAE", r"\bjae\b"),  # Jump if above or equal
+    "JB": TokenType("JB", r"\bjb\b"),  # Jump if below
+    "JBE": TokenType("JBE", r"\bjbe\b"),  # Jump if below or equal
     "MOV": TokenType("MOV", r"\bmov\b"),  # Move value
     "PRINT": TokenType("PRINT", r"\bprint\b"),  # Output function
     "INPUT": TokenType("INPUT", r"\binput\b"),  # Input function
