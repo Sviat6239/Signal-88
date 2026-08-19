@@ -322,7 +322,18 @@ class SubNode(ExpressionNode):
 
     def __repr__(self):
         return f"SubNode(target={self.target}, operandA={self.operandA}, operandB={self.operandB} line={self.line}, col={self.column})"
-        
+
+class MulNode(ExpressionNode):
+    def __init__(self, target: ExpressionNode, operandA: ExpressionNode, operandB: ExpressionNode):
+        super().__init__(token.line, token.column)
+        self.target = target
+        self.operandA = operandA
+        self.operandB = operandB
+
+    def __repr__(self):
+        return f"MulNode(target={self.target}, operandA={self.operandA}, operandB={self.operandB} line={self.line}, col={self.column})"
+      
+
 class BlockNode(ExpressionNode):
     def __init__(self, statements: List[ExpressionNode], line: int = 1, column: int = 1):
         super().__init__(statements[0].line if statements else line, statements[0].column if statements else column)
