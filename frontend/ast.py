@@ -414,6 +414,53 @@ class ArcCtgNode(ExpressionNode):
 
     def __repr__(self):
         return f"ArcCtgNode(target={self.target}, operand={self.operand}, line={self.line}, col={self.column})" 
+
+class RootNode(ExpressionNode):
+    def __init__(self, target: ExpressionNode, operand: ExpressionNode):
+        super().__init__(token.line, token.column)
+        self.target = target
+        self.operand = operand
+
+    def __repr__(self):
+        return f"RootNode(target={self.target}, operand={self.operand}, line={self.line}, col={self.column})" 
+
+class PowerNode(ExpressionNode):
+    def __init__(self, target: ExpressionNode, operandA: ExpressionNode, operandB: ExpressionNode):
+        super().__init__(token.line, token.column)
+        self.target = target
+        self.operandA = operandA
+        self.operandB = operandB
+
+    def __repr__(self):
+        return f"PowerNode(target={self.target}, operandA={self.operandA}, operandB={self.operandB}, line={self.line}, col={self.column})"
+
+class SqrtNode(ExpressionNode):
+    def __init__(self, target: ExpressionNode, operand: ExpressionNode):
+        super().__init__(token.line, token.column)
+        self.target = target
+        self.operand = operand
+
+    def __repr__(self):
+        return f"SqrtNode(target={self.target}, operand={self.operand}, line={self.line}, col={self.column})" 
+
+class FactorialNode(ExpressionNode):
+    def __init__(self, target: ExpressionNode, operand: ExpressionNode):
+        super().__init__(token.line, token.column)
+        self.target = target
+        self.operand = operand
+
+    def __repr__(self):
+        return f"FactorialNode(target={self.target}, operand={self.operand}, line={self.line}, col={self.column})" 
+
+class TetrationNode(ExpressionNode):
+    def __init__(self, target: ExpressionNode, operand: ExpressionNode):
+        super().__init__(token.line, token.column)
+        self.target = target
+        self.operand = operand
+
+    def __repr__(self):
+        return f"TetrationNode(target={self.target}, operand={self.operand}, line={self.line}, col={self.column})" 
+
 class BlockNode(ExpressionNode):
     def __init__(self, statements: List[ExpressionNode], line: int = 1, column: int = 1):
         super().__init__(statements[0].line if statements else line, statements[0].column if statements else column)
