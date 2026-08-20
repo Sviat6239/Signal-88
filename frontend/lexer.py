@@ -83,6 +83,7 @@ class Lexer:
         TokenSpec("PUSH", token_types_list["PUSH"], r"push\b", TokenCategory.KEYWORD),  # Stack push / collection append operation
         TokenSpec("POP", token_types_list["POP"], r"pop\b", TokenCategory.KEYWORD),  # Stack pop / collection extract operation
         TokenSpec("LABEL", token_types_list["LABEL"], r"label\b", TokenCategory.KEYWORD),  # Code jump label definition
+        TokenSpec("IMPORT", token_types_list["IMPORT"], r"import\b", TokenCategory.KEYWORD),  # Imports the choised character
 
         # Type Casts / Conversions
         TokenSpec("TOI8", token_types_list["TOI8"], r"\btoi8\b", TokenCategory.KEYWORD),  # Cast to 8-bit signed integer

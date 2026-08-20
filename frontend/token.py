@@ -119,6 +119,7 @@ token_types_list = {
     "PUSH": TokenType("PUSH", r"\bpush\b"),  # Push onto stack
     "POP": TokenType("POP", r"\bpop\b"),  # Pop from stack
     "LABEL": TokenType("LABEL", r"\blabel\b"),  # Code label definition
+    "IMPORT": TokenType("IMPORT", r"\bimport\b"), #Imports the choised character
 
     # Type Casts / Conversions
     "TOI8": TokenType("TOI8", r"\btoi8\b"),  # Cast to 8-bit signed integer

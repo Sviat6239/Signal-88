@@ -461,6 +461,16 @@ class TetrationNode(ExpressionNode):
     def __repr__(self):
         return f"TetrationNode(target={self.target}, operand={self.operand}, line={self.line}, col={self.column})" 
 
+class ImportNode(ExpressionNode):
+    def __init__(self, module: List[Token], names: List[Token] = None, line: int = 1, column: int = 1):
+        super().__init__(module[0].line if module else line, module[0].column if module else column)
+        self.module = module
+        self.names = names or []
+        self.alias = None  # Simplified, assuming alias not used
+
+    def __repr__(self):
+        return f"ImportNode(module={self.module}, names={self.names}, alias={self.alias}, line={self.line}, col={self.column})"
+
 class BlockNode(ExpressionNode):
     def __init__(self, statements: List[ExpressionNode], line: int = 1, column: int = 1):
         super().__init__(statements[0].line if statements else line, statements[0].column if statements else column)
